@@ -6,12 +6,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 def get_paths(root_dir: str, filter_extension: str = None):
     """Returns absolute paths at root_dir and all subdirs with a given file format, None includes all file extensions
 
-    Args:
-        root_dir: either relative or absolute path to a root_dir containing text files
-        filter_extension: consider only files with specified extension, None removes any filtering
+    Parameters
+    ----------
+    root_dir : str
+        either relative or absolute path to a root_dir containing text files
+    filter_extension : str
+        consider only files with specified extension, None removes any filtering
 
-    Returns:
-        list[str]: a list of absolute filepaths found at root_dir and all subdirs
+    Returns
+    -------
+    list[str]
+        list of absolute filepaths of files with specified extension at root_dir and all subdirs
+
     """
     result = []
     for dirpath, _, files in os.walk(os.path.abspath(root_dir)):
@@ -26,17 +32,29 @@ def get_paths(root_dir: str, filter_extension: str = None):
     return result
 
 
-def vectorize_documents(paths: list[str], vocab_size: int, stop_words):
+def vectorize_documents(paths: list[str], vocab_size: int, stop_words="english", decode_errors="ignore"):
     """Vectorizes documents at given paths to .txt files into sparse TF-IDF matrix
 
-    Args:
-        paths: a list of absolute paths to .txt files
-        vocab_size: size of the vocab to vectorize by
-        stop_words: string 'english' for english stopwords or custom list[str] of stopwords
+    Parameters
+    ----------
+    paths : list[str]
+        List of filepaths to fit
+    vocab_size : int
+        Size of the vocabulary to use when encoding
+    stop_words : list[str] or str
+        List of stopwords, or {english} for english stopwords
+    decode_errors : str
+        {strict, ignore, replace}, strict raises when encountered non unicode file
 
-    Returns:
-        tuple[sparse matrix, list[str]]: encoded documents and the list of the feature names (i.e. words)
+    Returns
+    -------
+    X, words : tuple[sparse matrix, list[str]]
+        scipy sparse matrix size (len(paths), vocab_size); list of feature names
+
     """
-    vectorizer = TfidfVectorizer(decode_error="ignore", stop_words=stop_words, max_features=vocab_size)
+    vectorizer = TfidfVectorizer(input="filename",
+                                 decode_error=decode_errors,
+                                 stop_words=stop_words,
+                                 max_features=vocab_size)
     X = vectorizer.fit_transform(paths)
     return X, vectorizer.get_feature_names()
