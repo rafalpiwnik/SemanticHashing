@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from preprocess.vectorize_documents import get_paths, vectorize_documents, save_vectorized
+from preprocess.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer
 
 
 @pytest.fixture

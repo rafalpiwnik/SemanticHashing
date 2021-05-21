@@ -1,16 +1,102 @@
 import os
 import pickle
+from typing import Union
 
 import h5py
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-def get_paths(root_dir: str, filter_extension: str = None):
+class DocumentVectorizer:
+    def __init__(self, name: str, vocab_size: int, stop_words="english", decode_errors="ignore"):
+        """
+        Parameters
+        ----------
+        vocab_size : int
+            Size of the vocabulary to use when encoding
+        stop_words : list[str] or str
+            List of stopwords, or {english} for english stopwords
+        decode_errors : str
+            {strict, ignore, replace}, strict raises when encountered non unicode file
+
+        """
+        self.model = TfidfVectorizer(input="filename",
+                                     decode_error=decode_errors,
+                                     stop_words=stop_words,
+                                     max_features=vocab_size)
+        self.vocab_size = vocab_size
+        self.stop_words = stop_words
+        self.decode_errors = decode_errors
+        self.name = name
+
+    def fit_transform(self, paths: list[str]):
+        """Fits the model and transforms paths into scipy matrix and list of features names (words)"""
+        X = self.model.fit_transform(paths)
+        return X, self.model.get_feature_names()
+
+    def transform(self, paths: list[str]):
+        """Uses the fitted model to transform paths into scipy matrix and list of features names (words)"""
+        X = self.model.transform(paths)
+        return X, self.model.get_feature_names()
+
+    @staticmethod
+    def save_transform(X, words: list[str], path: Union[str, os.PathLike], dataset_name: str,
+                       x_name="X", words_name="vocab"):
+        """Saves wcv matrix as .h5 ndarray and words as .pkl file
+
+        Parameters
+        ----------
+        X : scipy sparse matrix
+            Matrix of encoded word count vectors, assumed to be TF-IDF
+        words : list[str]
+            List of feature names used for the encoding
+        path : str
+            PathLike string, directory in which the data will be saved
+        dataset_name : str
+            Name of the output dir containing data
+        x_name
+            Name of the output X file name
+        words_name
+            Name of the output words file name
+
+        Returns
+        -------
+        None
+
+        Raises
+        -------
+        OSError
+            When the os module cannot create dir at 'path/dataset_name'
+        FileExistsError
+            When dir already exists at 'path/dataset_name'
+
+        """
+        dirpath = f"{path}/{dataset_name}"
+        x_path = f"{dirpath}/{x_name}.h5"
+        words_path = f"{dirpath}/{words_name}.pkl"
+
+        os.mkdir(dirpath)
+
+        with h5py.File(x_path, "w") as hf:
+            hf.create_dataset(name=dataset_name, data=X.toarray())
+
+        with open(words_path, "wb") as f:
+            pickle.dump(words, f)
+
+    def save_model(self, path: Union[str, os.PathLike]):
+        """Saves the model as .pkl object at specified path
+        Raises
+        -------
+        TODO"""
+        with open(path + "/" + self.name + ".pkl", "wb") as f:
+            pickle.dump(self, f)
+
+
+def get_paths(root_dir: Union[str, os.PathLike], filter_extension: str = None):
     """Returns absolute paths at root_dir and all subdirs with a given file format, None includes all file extensions
 
     Parameters
     ----------
-    root_dir : str
+    root_dir : str or os.PathLike
         either relative or absolute path to a root_dir containing text files
     filter_extension : str
         consider only files with specified extension, None removes any filtering
@@ -58,6 +144,7 @@ def vectorize_documents(paths: list[str], vocab_size: int, stop_words="english",
                                  decode_error=decode_errors,
                                  stop_words=stop_words,
                                  max_features=vocab_size)
+    settings = {"vocab_size": vocab_size, "stop_words": stop_words, "decode_errors": decode_errors}  # TODO
     X = vectorizer.fit_transform(paths)
     return X, vectorizer.get_feature_names()
 
