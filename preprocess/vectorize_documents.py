@@ -7,7 +7,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class DocumentVectorizer:
-    def __init__(self, name: str, vocab_size: int, stop_words="english", decode_errors="ignore"):
+    """Wrapper for scipy TfidfVectorizer with additional save/load functionalities"""
+
+    def __init__(self, vocab_size: int, name: str = "vectorizer", stop_words="english", decode_errors="ignore"):
         """
         Parameters
         ----------
@@ -58,10 +60,6 @@ class DocumentVectorizer:
         words_name
             Name of the output words file name
 
-        Returns
-        -------
-        None
-
         Raises
         -------
         OSError
@@ -82,13 +80,23 @@ class DocumentVectorizer:
         with open(words_path, "wb") as f:
             pickle.dump(words, f)
 
-    def save_model(self, path: Union[str, os.PathLike]):
-        """Saves the model as .pkl object at specified path
-        Raises
-        -------
-        TODO"""
-        with open(path + "/" + self.name + ".pkl", "wb") as f:
-            pickle.dump(self, f)
+
+def save_vectorizer(vectorizer: DocumentVectorizer, path: Union[str, os.PathLike]):
+    """Saves the model as .pkl object at specified path, overwrites any underlaying model
+    Raises
+    -------
+    EnvironmentError
+        When cannot save the vectorizer at specified path
+    """
+    with open(path + "/" + vectorizer.name + ".pkl", "wb") as f:
+        pickle.dump(vectorizer, f)
+
+
+def load_vectorizer(path: Union[str, os.PathLike]):
+    """Returns a DocumentVectorizer loaded from file"""
+    with open(path, "rb") as f:
+        data: DocumentVectorizer = pickle.load(f)
+        return data
 
 
 def get_paths(root_dir: Union[str, os.PathLike], filter_extension: str = None):

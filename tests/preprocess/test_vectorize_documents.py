@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-from preprocess.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer
+from preprocess.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer, \
+    load_vectorizer, save_vectorizer
 
 
 @pytest.fixture
@@ -95,3 +96,15 @@ def test_vectorize_documents_binary_file(pangram_no_stopwords):
     """Strict decoding raises error when file is not UTF-8, ignore reads the file contents anyway"""
     with pytest.raises(UnicodeDecodeError):
         X, words = vectorize_documents(["resources/dataset_mock/file04.pkl"], 100, decode_errors="strict")
+
+
+def test_save_and_load_vectorizer():
+    v = DocumentVectorizer(100)
+    X, words = v.fit_transform(["resources/dataset_mock/file01.txt"])
+    print(X)
+    print(words)
+    save_vectorizer(v, "resources/dataset_mock/new_ds")
+    new_vec = load_vectorizer("resources/dataset_mock/new_ds/vectorizer.pkl")
+    X_n, words_n = new_vec.transform(["resources/dataset_mock/file01.txt"])
+    print(X_n)
+    print(words_n)
