@@ -1,9 +1,9 @@
 from abc import ABC
 
 import tensorflow as tf
-from keras import layers
-from keras.models import Model
+from keras import Model
 from tensorflow import keras
+from tensorflow.keras import layers
 
 KL_STEP = 1.0 / 5000.0
 DROPOUT_PROB = 0.1
