@@ -81,20 +81,15 @@ class DocumentVectorizer:
             pickle.dump(words, f)
 
 
-def save_vectorizer(vectorizer: DocumentVectorizer, path: Union[str, os.PathLike]):
-    """Saves the model as .pkl object at specified path, overwrites any underlaying model
-    Raises
-    -------
-    EnvironmentError
-        When cannot save the vectorizer at specified path
-    """
-    with open(path + "/" + vectorizer.name + ".pkl", "wb") as f:
+def save_vectorizer(vectorizer: DocumentVectorizer, dirpath: Union[str, os.PathLike]):
+    """Saves a DocumentVectorizer as .pkl object at specified path, overwrites any underlying model"""
+    with open(dirpath + "/" + vectorizer.name + ".pkl", "wb") as f:
         pickle.dump(vectorizer, f)
 
 
-def load_vectorizer(path: Union[str, os.PathLike]):
-    """Returns a DocumentVectorizer loaded from file"""
-    with open(path, "rb") as f:
+def load_vectorizer(dirpath: Union[str, os.PathLike], name: str = "vectorizer.pkl"):
+    """Returns a DocumentVectorizer loaded from file at dirpath/name"""
+    with open(dirpath + "/" + name, "rb") as f:
         data: DocumentVectorizer = pickle.load(f)
         return data
 
