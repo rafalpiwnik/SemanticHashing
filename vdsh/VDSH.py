@@ -5,9 +5,12 @@ from keras import layers
 from keras.models import Model
 from tensorflow import keras
 
+KL_STEP = 1.0 / 5000.0
+DROPOUT_PROB = 0.1
+
 
 class Sampling(layers.Layer):
-    """Uses (z_mean, z_log_var) to sample z, a latent semantic vector."""
+    """Uses (z_mean, z_log_var) to sample z, a latent semantic vector from random.normal"""
 
     def call(self, inputs, *args, **kwargs):
         z_mean, z_log_var = inputs
@@ -17,8 +20,8 @@ class Sampling(layers.Layer):
         return z_mean + tf.sqrt(tf.exp(z_log_var)) * epsilon
 
 
-def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_prob: float = 0.2):
-    """Creates a VDSH encoder"""
+def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_prob: float = DROPOUT_PROB):
+    """Creates a VDSH encoder: vocab_dim -> latent_dim"""
     inputs = keras.Input(shape=(vocab_dim,))
     x = layers.Dense(hidden_dim, activation="relu", name="enc1")(inputs)
     x = layers.Dense(hidden_dim, activation="relu", name="enc2")(x)
@@ -46,9 +49,6 @@ def create_decoder(vocab_size: int, latent_dim: int):
     decoder.summary()
 
     return decoder
-
-
-KL_STEP = 1.0 / 5000.0
 
 
 class VDSH(Model, ABC):
