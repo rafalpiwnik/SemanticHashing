@@ -1,1 +1,1 @@
-from vdsh.controller import create_vdsh
+from vdsh.utility import create_vdsh
