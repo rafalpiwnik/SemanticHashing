@@ -39,6 +39,7 @@ def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_pro
 
 
 def create_decoder(vocab_size: int, latent_dim: int):
+    """Creates a VDSH decoder: latent_dim -> vocab_dim"""
     latent_inputs = keras.Input(shape=(latent_dim,))
 
     # Pytorch like
@@ -110,7 +111,7 @@ class VDSH(Model, ABC):
         self.reconstruction_loss_tracker.update_state(rl)
         self.kl_loss_tracker.update_state(kld * self.kl_weight)
 
-        self.kl_weight = min(self.kl_weight + self.kl_weight_step, 1.0)
+        self.kl_weight = min(self.kl_weight + self.kl_step, 1.0)
 
         return {
             "loss": self.total_loss_tracker.result(),

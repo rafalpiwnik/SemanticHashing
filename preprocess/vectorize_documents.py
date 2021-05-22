@@ -4,6 +4,7 @@ from typing import Union
 
 import h5py
 from sklearn.feature_extraction.text import TfidfVectorizer
+from tqdm import tqdm
 
 
 class DocumentVectorizer:
@@ -112,7 +113,7 @@ def get_paths(root_dir: Union[str, os.PathLike], filter_extension: str = None):
     """
     result = []
     for dirpath, _, files in os.walk(os.path.abspath(root_dir)):
-        for f in files:
+        for f in tqdm(files):
             abspath = os.path.join(dirpath, f)
             if filter_extension:
                 ext = os.path.splitext(abspath)[-1].lower()
