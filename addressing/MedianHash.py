@@ -20,7 +20,7 @@ class MedianHash:
     @property
     def code(self) -> frozenbitarray:
         """Returns the frozenbitarray representation """
-        return self.code
+        return self._code
 
     def hamming(self, other: MedianHash) -> int:
         """Calculates the hamming dist between two median hash codes"""
@@ -34,3 +34,12 @@ class MedianHash:
 
     def __str__(self):
         return self._code.__str__()
+
+
+def medhash_transform(z_mean_matrix: np.ndarray):
+    if z_mean_matrix.ndim != 2:
+        raise ValueError(f"Illegal z_mean_matrix shape: {z_mean_matrix.shape}")
+    result = []
+    for z_mean in z_mean_matrix:
+        result.append(MedianHash(z_mean))
+    return result
