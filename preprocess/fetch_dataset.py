@@ -26,9 +26,17 @@ def fetch_dataset(name: str, data_home: Union[str, os.PathLike]) -> sklearn.util
     ValueError
         When dataset name is not supported
     """
-    if name == "20ng":
-        return fetch_20newsgroups(data_home)
-    elif name == "rcv1":
-        return fetch_rcv1(data_home)
-    else:
+    if name not in AVAILABLE_DATASETS:
         raise ValueError("Invalid dataset name")
+    else:
+        try:
+            os.mkdir(f"{data_home}/{name}")
+        except FileExistsError:
+            print(f"Dataset root for {name} already exists")
+
+    dest = f"{data_home}/{name}"
+    if name == "20ng":
+        # TODO progress bar as number of files ~18k here
+        return fetch_20newsgroups(data_home=dest)
+    elif name == "rcv1":
+        return fetch_rcv1(data_home=dest)
