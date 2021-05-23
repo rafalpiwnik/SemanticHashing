@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
+from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
 from vdsh import create_vdsh
 
@@ -32,6 +33,9 @@ def train():
 if __name__ == "__main__":
     print("Starting")
 
-    train()
+    setup_homedir(overwrite=False)
+    settings = load_config()
+
+    print(settings)
 
     input("Stall...")
