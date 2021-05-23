@@ -1,7 +1,8 @@
 import os
 from typing import Union
 
-import scipy.sparse
+import h5py
+import h5sparse
 import sklearn.utils
 from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -48,19 +49,19 @@ def fetch_dataset(name: str, data_home: Union[str, os.PathLike]) -> sklearn.util
             v = TfidfVectorizer(stop_words="english", max_features=10000)
 
             # Scipy sparse matrices
-            train_tfidf = v.fit_transform(train.data)
-            test_tfidf = v.transform(test.data)
+            sparse_train_tfidf = v.fit_transform(train.data)
+            sparse_test_tfidf = v.transform(test.data)
 
-            with open(f"{dest}/data.npz", "w") as f:
-                scipy.sparse.save_npz(f, train_tfidf)
-
-            # TODO is too big
-            """
-            with h5py.File(f"{dest}/data.hdf5", "w") as hf:
-                train_docs = hf.create_dataset(name="train", data=train_tfidf, compression="gzip")
+            with h5sparse.File(f"{dest}/dataSparse.npz", "w") as hf:
+                train_docs = hf.create_dataset(name="train", data=sparse_train_tfidf)
                 train_labels = hf.create_dataset(name="train_labels", data=train.target)
-                test_docs = hf.create_dataset(name="test", data=test_tfidf)
-                test_labels = hf.create_dataset(name="test_labels", data=test.target, compression="gzip")
-            """
+                test_docs = hf.create_dataset(name="test", data=sparse_test_tfidf)
+                test_labels = hf.create_dataset(name="test_labels", data=test.target)
+
+            with h5py.File(f"{dest}/data.hdf5", "w") as hf:
+                train_docs = hf.create_dataset(name="train", data=sparse_train_tfidf.toarray(), compression="gzip")
+                train_labels = hf.create_dataset(name="train_labels", data=train.target)
+                test_docs = hf.create_dataset(name="test", data=sparse_test_tfidf.toarray(), compression="gzip")
+                test_labels = hf.create_dataset(name="test_labels", data=test.target)
         elif name == "rcv1":
             return fetch_rcv1()
