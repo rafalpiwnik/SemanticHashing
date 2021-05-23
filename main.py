@@ -3,7 +3,6 @@ import tensorflow as tf
 
 from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
-from preprocess.fetch_dataset import fetch_dataset
 from vdsh import create_vdsh
 
 
@@ -39,6 +38,6 @@ if __name__ == "__main__":
 
     print(settings)
 
-    fetch_dataset(name="20ng", data_home=settings["model"]["data_home"])
+    # fetch_dataset(name="20ng", data_home=settings["model"]["data_home"])
 
     input("Stall...")
