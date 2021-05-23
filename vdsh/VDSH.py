@@ -1,8 +1,7 @@
 from abc import ABC
 
 import tensorflow as tf
-from keras import Model
-from tensorflow import keras
+from tensorflow.keras import Model
 from tensorflow.keras import layers
 
 KL_STEP = 1.0 / 5000.0
@@ -22,7 +21,7 @@ class Sampling(layers.Layer):
 
 def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_prob: float = DROPOUT_PROB):
     """Creates a VDSH encoder: vocab_dim -> latent_dim"""
-    inputs = keras.Input(shape=(vocab_dim,))
+    inputs = tf.keras.Input(shape=(vocab_dim,))
     x = layers.Dense(hidden_dim, activation="relu", name="enc1")(inputs)
     x = layers.Dense(hidden_dim, activation="relu", name="enc2")(x)
     x = layers.Dropout(rate=dropout_prob)(x)
@@ -32,7 +31,7 @@ def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_pro
 
     z = Sampling()([z_mean, z_log_var])
 
-    encoder = keras.Model(inputs, [z_mean, z_log_var, z], name="encoder")
+    encoder = tf.keras.Model(inputs, [z_mean, z_log_var, z], name="encoder")
     encoder.summary()
 
     return encoder
@@ -40,13 +39,13 @@ def create_encoder(vocab_dim: int, hidden_dim: int, latent_dim: int, dropout_pro
 
 def create_decoder(vocab_size: int, latent_dim: int):
     """Creates a VDSH decoder: latent_dim -> vocab_dim"""
-    latent_inputs = keras.Input(shape=(latent_dim,))
+    latent_inputs = tf.keras.Input(shape=(latent_dim,))
 
     # Pytorch like
     prob_w = layers.Dense(vocab_size, activation="softmax")(latent_inputs)
     logprob_w = tf.math.log(prob_w)
 
-    decoder = keras.Model(latent_inputs, logprob_w, name="decoder")
+    decoder = tf.keras.Model(latent_inputs, logprob_w, name="decoder")
     decoder.summary()
 
     return decoder
@@ -62,9 +61,9 @@ class VDSH(Model, ABC):
         self.kl_weight = 0.0
         self.kl_step = kl_step
 
-        self.total_loss_tracker = keras.metrics.Mean(name="total_loss")
-        self.reconstruction_loss_tracker = keras.metrics.Mean(name="reconstruct_loss")
-        self.kl_loss_tracker = keras.metrics.Mean(name="kl_loss")
+        self.total_loss_tracker = tf.keras.metrics.Mean(name="total_loss")
+        self.reconstruction_loss_tracker = tf.keras.metrics.Mean(name="reconstruct_loss")
+        self.kl_loss_tracker = tf.keras.metrics.Mean(name="kl_loss")
 
     @property
     def metrics(self):

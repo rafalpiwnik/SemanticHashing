@@ -1,15 +1,18 @@
+import numpy as np
 import tensorflow as tf
 
-from preprocess import DocumentVectorizer, get_paths
+from preprocess import DocumentVectorizer
 from vdsh import create_vdsh
 
-if __name__ == "__main__":
+
+def train():
     VOCAB_SIZE = 10000
 
     vectorizer = DocumentVectorizer(VOCAB_SIZE)
-    paths = get_paths("datasets/mini_newsgroups")
-    X_sparse, words = vectorizer.fit_transform(paths)
-    X = X_sparse.toarray()
+    # paths = get_paths("datasets/mini_newsgroups")
+    # X_sparse, words = vectorizer.fit_transform(paths)
+
+    X = np.ones(shape=(2000, 10000))
 
     vdsh = create_vdsh(VOCAB_SIZE, hidden_dim=1000, latent_dim=128, kl_step=(1 / 5000.0), dropout_prob=0.1)
 
@@ -24,3 +27,11 @@ if __name__ == "__main__":
     vdsh.compile(optimizer=opt)
 
     vdsh.fit(X, batch_size=100, epochs=25)
+
+
+if __name__ == "__main__":
+    print("Starting")
+
+    train()
+
+    input("Stall...")
