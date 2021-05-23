@@ -1,8 +1,10 @@
 import os
 from typing import Union
 
+import scipy.sparse
 import sklearn.utils
 from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
 
@@ -32,11 +34,33 @@ def fetch_dataset(name: str, data_home: Union[str, os.PathLike]) -> sklearn.util
         try:
             os.mkdir(f"{data_home}/{name}")
         except FileExistsError:
-            print(f"Dataset root for {name} already exists")
+            pass
 
-    dest = f"{data_home}/{name}"
-    if name == "20ng":
-        # TODO progress bar as number of files ~18k here
-        return fetch_20newsgroups(data_home=dest)
-    elif name == "rcv1":
-        return fetch_rcv1(data_home=dest)
+        dest = f"{data_home}/{name}"
+
+        if name == "20ng":
+            # TODO progress bar here
+            print("Fetching 20ng...")
+            train = fetch_20newsgroups(subset="train", remove=("headers", "footers", "quotes"))
+            test = fetch_20newsgroups(subset="test", remove=("headers", "footers", "quotes"))
+
+            print("Vectorizing...")
+            v = TfidfVectorizer(stop_words="english", max_features=10000)
+
+            # Scipy sparse matrices
+            train_tfidf = v.fit_transform(train.data)
+            test_tfidf = v.transform(test.data)
+
+            with open(f"{dest}/data.npz", "w") as f:
+                scipy.sparse.save_npz(f, train_tfidf)
+
+            # TODO is too big
+            """
+            with h5py.File(f"{dest}/data.hdf5", "w") as hf:
+                train_docs = hf.create_dataset(name="train", data=train_tfidf, compression="gzip")
+                train_labels = hf.create_dataset(name="train_labels", data=train.target)
+                test_docs = hf.create_dataset(name="test", data=test_tfidf)
+                test_labels = hf.create_dataset(name="test_labels", data=test.target, compression="gzip")
+            """
+        elif name == "rcv1":
+            return fetch_rcv1()
