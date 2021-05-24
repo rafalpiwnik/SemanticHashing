@@ -16,6 +16,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import preprocess
 from controllers.usersetup import load_config
 from preprocess import DocumentVectorizer
+from preprocess.MetaInfo import DatasetMetaInfo
 
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
 
@@ -58,9 +59,8 @@ def fetch_dataset(name: str, data_home: Union[str, os.PathLike]):
             # create_rcv1(data_home, num_targets=40, vocab_size=15000, num_train=10000, num_test=2000)
 
 
+"""
 class MetaInfo:
-    """Meta info dict to be saved with the dataset to provide additional info"""
-
     def __init__(self, name: str, num_train: int, num_test: int, num_labels: int = 0, user: bool = False,
                  source_dir: Union[str, os.PathLike] = None):
         assert num_train >= 0
@@ -90,6 +90,7 @@ class MetaInfo:
         self.info["time_saved"] = date_iso
         with open(path, "w") as f:
             json.dump(self.info, f)
+            """
 
 
 def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = ""):
@@ -135,12 +136,12 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
 
         preprocess.save_vectorizer(v, dirpath=f"{dest}")
 
-        mi = MetaInfo(name,
-                      num_train=X.shape[0],
-                      num_test=0,
-                      num_labels=0,
-                      user=True,
-                      source_dir=root_dir)
+        mi = DatasetMetaInfo(name,
+                             num_train=X.shape[0],
+                             num_test=0,
+                             num_labels=0,
+                             user=True,
+                             source_dir=root_dir)
 
         mi.dump(f"{dest}/meta.json")
 
@@ -215,10 +216,10 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
             hf.create_dataset(name="test", data=sparse_test_tfidf.toarray(), compression="gzip")
             hf.create_dataset(name="test_labels", data=test.target)
 
-        mi = MetaInfo("20ng",
-                      num_train=sparse_train_tfidf.shape[0],
-                      num_test=sparse_test_tfidf.shape[0],
-                      num_labels=1)
+        mi = DatasetMetaInfo("20ng",
+                             num_train=sparse_train_tfidf.shape[0],
+                             num_test=sparse_test_tfidf.shape[0],
+                             num_labels=1)
 
         mi.dump(f"{dest}/meta.json")
 

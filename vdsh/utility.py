@@ -3,43 +3,111 @@ import os
 import tensorflow as tf
 
 from controllers.usersetup import load_config
-from preprocess import fetch_dataset
+from preprocess import datasets
+from preprocess.MetaInfo import ModelMetaInfo, MetaInfo
 from vdsh.VDSH import create_encoder, create_decoder, VDSH
 
 
-def create_vdsh(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: float, dropout_prob: float):
-    """Creates a VDSH model"""
+def create_vdsh(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: float, dropout_prob: float,
+                name: str = "default"):
+    """Creates a VDSH model and adds relevant meta info"""
     enc = create_encoder(vocab_dim, hidden_dim, latent_dim, dropout_prob)
     dec = create_decoder(vocab_dim, latent_dim)
 
     vdsh = VDSH(encoder=enc, decoder=dec, kl_step=kl_step)
 
+    mi = ModelMetaInfo(name=name,
+                       vocab_size=vocab_dim,
+                       hidden_dim=hidden_dim,
+                       latent_dim=latent_dim,
+                       kl_step=kl_step,
+                       dropout_prob=dropout_prob)
+
+    vdsh.meta = mi
+
     return vdsh
 
 
-def fit_processed(model: VDSH, batch: int, num_epochs: int, dataset_name: str):
-    train = fetch_dataset.extract_train(dataset_name)
+def train_model(model: VDSH, batch: int, num_epochs: int, dataset_name: str):
+    """Fits model with train data of a given qualified dataset and saves it under its qualified name to models
+    The model must be compiled
 
-    model.fit(train, batch_size=batch, epochs=num_epochs)
-    model.predict(train[0:,])
+    Parameters
+    ----------
+    model : VDSH
+        A compiled VDSH model
+    batch : int
+        Batch size to use in training
+    num_epochs : int
+        Number of epochs
+    dataset_name : str
+        Qualified dataset name of a dataset folder located at data_home/dataset_name
 
-    dump_model(model, model.name)
-    fetch_dataset.copy_vectorizer(dataset_name, model.name)
+
+    Returns
+    -------
+    VDSH
+        Fitted model with updated meta info
+
+    """
+    train = datasets.extract_train(dataset_name)  # Gets dataset by name from data_home
+
+    model.fit(train, batch_size=batch, epochs=num_epochs)  # Fits with train only
+    model.predict(train[0:, ])
+
+    model.meta.flag_fit(dataset_name)  # Model is set as fitted
+    dump_model(model)  # Model is dumped, alongside with meta info and vectorizer is available
 
     return model
 
 
-def dump_model(model: VDSH, target_dir_name: str):
+def dump_model(model: VDSH):
+    """Dumps the model to model_home/model.meta.name alongside with vectorizer if available at specified dataset name
+
+    Parameters
+    ----------
+    model : VDSH
+        Model with meta info
+
+    Returns
+    -------
+    None
+    """
     try:
-        model_home = load_config()["model"]["model_home"]
-        dest = f"{model_home}/{target_dir_name}"
+        config = load_config()
+        model_home = config["model"]["model_home"]
+
+        # Infer export model name and dataset name from meta info
+        mi = model.meta
+
+        model_name = mi.name
+        dataset_name = mi.dataset_name
+
+        model_dest = f"{model_home}/{model_name}"
 
         try:
-            os.mkdir(dest)
+            os.mkdir(model_dest)
         except FileExistsError:
             pass
 
-        model.save(dest)
+        model.save(model_dest)
+        mi.dump(model_dest)
+
+        if dataset_name:
+            datasets.copy_vectorizer(dataset_name, model_name)
 
     except (KeyError, IOError):
-        print("Couldn't read config.json file")
+        print("Couldn't dump the model")
+
+
+def load_model(model_name: str):
+    config = load_config()
+    model_home = config["model"]["model_home"]
+
+    model = tf.keras.models.load_model(f"{model_home}/{model_name}")
+    mi = MetaInfo.from_file(f"{model_home}/{model_name}")
+    model.meta = mi
+
+    print(model.meta.info)
+
+    return model

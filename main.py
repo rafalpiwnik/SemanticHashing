@@ -6,7 +6,7 @@ import vdsh.utility
 from addressing.metrics import run_recall_test
 from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
-from preprocess.fetch_dataset import create_rcv1, create_20ng, create_user_dataset
+from preprocess.datasets import create_rcv1, create_20ng, create_user_dataset
 from vdsh import create_vdsh
 
 
@@ -46,12 +46,16 @@ if __name__ == "__main__":
     HIDDEN_DIM = 1000
     LATENT_DIM = 32
 
-    create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
+    # create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
 
-    model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1)
-    model.compile(optimizer="adam")
+    # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="kappa_phi")
+    # model.compile(optimizer="adam")
 
-    vdsh.utility.fit_processed(model, 100, 5, dataset_name="20ng_user")
+    # vdsh.utility.train_model(model, 100, 1, dataset_name="20ng_user")
+
+    model = vdsh.utility.load_model("kappa_phi")
+
+    print(model)
 
     """
     path = settings["model"]["data_home"]

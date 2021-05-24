@@ -1,8 +1,11 @@
 from abc import ABC
+from typing import Optional
 
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras import layers
+
+from preprocess.MetaInfo import ModelMetaInfo
 
 KL_STEP = 1.0 / 5000.0
 DROPOUT_PROB = 0.1
@@ -60,6 +63,8 @@ class VDSH(Model, ABC):
 
         self.kl_weight = 0.0
         self.kl_step = kl_step
+
+        self.meta: Optional[ModelMetaInfo] = None
 
         self.total_loss_tracker = tf.keras.metrics.Mean(name="total_loss")
         self.reconstruction_loss_tracker = tf.keras.metrics.Mean(name="reconstruct_loss")
