@@ -23,6 +23,7 @@ DEFAULT_SETTINGS = {
 }
 
 
+# TODO recursive calls it itself
 def load_config(home_path: Union[str, os.PathLike] = os.path.expanduser("~")):
     """Loads config.json at ~/.semhash, returns json read as dict
 
@@ -40,8 +41,14 @@ def load_config(home_path: Union[str, os.PathLike] = os.path.expanduser("~")):
         with open(f"{home_path}/{CONFIG_ROOT}/{CONFIG_NAME}", "r") as f:
             settings = json.load(f)
             return settings
-    except json.JSONDecodeError as e:
-        raise IOError(f"Cannot read {home_path}/{CONFIG_ROOT}/{CONFIG_NAME} because of JsonDecodeError") from e
+    except json.JSONDecodeError:
+        print(f"Cannot read {home_path}/{CONFIG_ROOT}/{CONFIG_NAME} because of JsonDecodeError")
+        setup_homedir(HOME_PATH, overwrite=True)
+        return load_config(HOME_PATH)
+    except (FileNotFoundError, IOError):
+        print(f"Cannot load config at {home_path}/{CONFIG_ROOT}/{CONFIG_NAME}. Creating standard config.")
+        setup_homedir(HOME_PATH, overwrite=True)
+        return load_config(HOME_PATH)
 
 
 def config_exists(home_path: Union[str, os.PathLike] = os.path.expanduser("~")):

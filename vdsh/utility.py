@@ -73,34 +73,48 @@ def dump_model(model: VDSH):
     -------
     None
     """
+    config = load_config()
+    model_home = config["model"]["model_home"]
+
+    # Infer export model name and dataset name from meta info
+    mi = model.meta
+
+    model_name = mi.name
+    dataset_name = mi.dataset_name
+
+    model_dest = f"{model_home}/{model_name}"
+
     try:
-        config = load_config()
-        model_home = config["model"]["model_home"]
+        os.mkdir(model_dest)
+    except FileExistsError:
+        pass
 
-        # Infer export model name and dataset name from meta info
-        mi = model.meta
+    model.save(model_dest)
+    mi.dump(model_dest)
 
-        model_name = mi.name
-        dataset_name = mi.dataset_name
+    if dataset_name:
+        datasets.copy_vectorizer(dataset_name, model_name)
 
-        model_dest = f"{model_home}/{model_name}"
-
-        try:
-            os.mkdir(model_dest)
-        except FileExistsError:
-            pass
-
-        model.save(model_dest)
-        mi.dump(model_dest)
-
-        if dataset_name:
-            datasets.copy_vectorizer(dataset_name, model_name)
-
-    except (KeyError, IOError):
-        print("Couldn't dump the model")
 
 
 def load_model(model_name: str):
+    """Loads the model specified by name at model_home/model_name
+
+    Parameters
+    ----------
+    model_name : str
+        A qualified model name
+
+    Raises
+    ------
+    OSError
+        When model with specified model_name does not exist
+
+    Returns
+    -------
+    VDSH
+        Retrieved model
+    """
     config = load_config()
     model_home = config["model"]["model_home"]
 

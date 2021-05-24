@@ -8,6 +8,7 @@ from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
 from preprocess.datasets import create_rcv1, create_20ng, create_user_dataset
 from vdsh import create_vdsh
+from vdsh.VDSH import VDSH
 
 
 def train_mock(train, train_target, test, test_target):
@@ -38,9 +39,7 @@ def train_mock(train, train_target, test, test_target):
 
 
 if __name__ == "__main__":
-    print("Starting")
-
-    setup_homedir(overwrite=False)
+    # setup_homedir(overwrite=False)
 
     VOCAB_SIZE = 10000
     HIDDEN_DIM = 1000
@@ -53,9 +52,10 @@ if __name__ == "__main__":
 
     # vdsh.utility.train_model(model, 100, 1, dataset_name="20ng_user")
 
-    model = vdsh.utility.load_model("kappa_phi")
+    model: VDSH = vdsh.utility.load_model("kappa_phi")
 
-    print(model)
+    x = model.predict(np.ones(shape=(1, 10000)))
+    print(x)
 
     """
     path = settings["model"]["data_home"]
