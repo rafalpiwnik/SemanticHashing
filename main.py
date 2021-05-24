@@ -2,6 +2,7 @@ import h5py
 import numpy as np
 import tensorflow as tf
 
+import vdsh.utility
 from addressing.metrics import run_recall_test
 from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
@@ -40,19 +41,25 @@ if __name__ == "__main__":
     print("Starting")
 
     setup_homedir(overwrite=False)
-    settings = load_config()
 
-    print(settings)
+    VOCAB_SIZE = 10000
+    HIDDEN_DIM = 1000
+    LATENT_DIM = 32
 
-    # create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=100, name="20ng_user")
+    create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
 
+    model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1)
+    model.compile(optimizer="adam")
+
+    vdsh.utility.fit_processed(model, 100, 5, dataset_name="20ng_user")
+
+    """
     path = settings["model"]["data_home"]
     with h5py.File(f"{path}/20ng_user/data.hdf5", "r") as hf:
         train = np.array(hf["train"])
-        """
         train_labels = np.array(hf["train_labels"])
         test = np.array(hf["test"])
         test_labels = np.array(hf["test_labels"])
-        """
 
         train_mock(train, None, None, None)
+    """

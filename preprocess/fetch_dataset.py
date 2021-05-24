@@ -1,6 +1,9 @@
 import datetime
 import json
 import os
+import pickle
+import shutil
+
 import pandas as pd
 from typing import Union
 
@@ -143,6 +146,44 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
 
     except (KeyError, IOError):
         print("Couldn't read config.json file")
+
+
+def extract_train(dataset_name: str):
+    data_home = load_config()["model"]["data_home"]
+
+    try:
+        with h5py.File(f"{data_home}/{dataset_name}/data.hdf5", "r") as hf:
+            train: np.ndarray = hf["train"][:]
+            return train
+    except IOError:
+        print(f"Cannot reach data.hdf5 in {dataset_name}")
+        return None
+
+
+def extract_vectorizer(dataset_name: str):
+    data_home = load_config()["model"]["data_home"]
+
+    try:
+        with open(f"{data_home}/{dataset_name}/vectorizer.pkl", "rb") as f:
+            vec = pickle.load(f)
+            return vec
+    except IOError:
+        print(f"Cannot reach vectorizer in {dataset_name}")
+        return None
+
+
+def copy_vectorizer(dataset_name: str, dest_model_name: str):
+    config = load_config()
+    data_home = config["model"]["data_home"]
+    model_home = config["model"]["model_home"]
+
+    src = f"{data_home}/{dataset_name}/vectorizer.pkl"
+    dest = f"{model_home}\\{dest_model_name}\\vectorizer.pkl"
+
+    try:
+        shutil.copyfile(src, dest)
+    except FileNotFoundError:
+        print(f"Dataset {dataset_name} has no defined vectorizer. It will not be usable for searching")
 
 
 def create_20ng(vocab_size: int, name: str = "20ng"):
