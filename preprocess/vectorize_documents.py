@@ -44,7 +44,8 @@ class DocumentVectorizer:
     @staticmethod
     def save_transform(X, words: list[str], path: Union[str, os.PathLike], dataset_name: str,
                        x_name="X", words_name="vocab"):
-        """Saves wcv matrix as .h5 ndarray and words as .pkl file
+        """TODO check if used
+        Saves wcv matrix as .h5 ndarray and words as .pkl file
 
         Parameters
         ----------

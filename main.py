@@ -1,15 +1,16 @@
+import h5py
 import numpy as np
 import tensorflow as tf
-from h5sparse import h5sparse
 
 from addressing.metrics import run_recall_test
 from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
+from preprocess.fetch_dataset import create_rcv1, create_20ng, create_user_dataset
 from vdsh import create_vdsh
 
 
 def train_mock(train, train_target, test, test_target):
-    VOCAB_SIZE = 10000
+    VOCAB_SIZE = 100
 
     vectorizer = DocumentVectorizer(VOCAB_SIZE)
     # paths = get_paths("datasets/mini_newsgroups")
@@ -43,13 +44,15 @@ if __name__ == "__main__":
 
     print(settings)
 
-    # fetch_20ng(vocab_size=10000)
+    # create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=100, name="20ng_user")
 
     path = settings["model"]["data_home"]
-    with h5sparse.File(f"{path}/20ng/data.hdf5", "r") as hf:
+    with h5py.File(f"{path}/20ng_user/data.hdf5", "r") as hf:
         train = np.array(hf["train"])
+        """
         train_labels = np.array(hf["train_labels"])
         test = np.array(hf["test"])
         test_labels = np.array(hf["test_labels"])
+        """
 
-        train_mock(train, train_labels, test, test_labels)
+        train_mock(train, None, None, None)
