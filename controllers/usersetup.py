@@ -31,11 +31,6 @@ def load_config(home_path: Union[str, os.PathLike] = os.path.expanduser("~")):
     -------
     settings : dict
         Dictionary with structure as defined in config.json
-
-    Raises
-    -------
-    IOError
-        When config file in unreachable or decoding cannot be completed
     """
     try:
         with open(f"{home_path}/{CONFIG_ROOT}/{CONFIG_NAME}", "r") as f:

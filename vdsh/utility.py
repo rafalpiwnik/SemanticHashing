@@ -2,8 +2,9 @@ import os
 
 import tensorflow as tf
 
+import preprocess
 from controllers.usersetup import load_config
-from preprocess import datasets
+from preprocess import datasets, DocumentVectorizer
 from preprocess.MetaInfo import ModelMetaInfo, MetaInfo
 from vdsh.VDSH import create_encoder, create_decoder, VDSH
 
@@ -96,9 +97,8 @@ def dump_model(model: VDSH):
         datasets.copy_vectorizer(dataset_name, model_name)
 
 
-
-def load_model(model_name: str):
-    """Loads the model specified by name at model_home/model_name
+def load_model(model_name: str) -> tuple[VDSH, DocumentVectorizer]:
+    """Loads the model if present from model_home/model_name and returns it
 
     Parameters
     ----------
@@ -112,8 +112,8 @@ def load_model(model_name: str):
 
     Returns
     -------
-    VDSH
-        Retrieved model
+    tuple[VDSH, DocumentVectorizer]
+        Retrieved model and the vectorizer if present, else None
     """
     config = load_config()
     model_home = config["model"]["model_home"]
@@ -122,6 +122,13 @@ def load_model(model_name: str):
     mi = MetaInfo.from_file(f"{model_home}/{model_name}")
     model.meta = mi
 
+    try:
+        vec = preprocess.load_vectorizer(f"{model_home}/{model_name}")
+    except (FileNotFoundError, IOError):
+        print("Vectorizer not found")
+        vec = None
+
+    print("Model loaded:")
     print(model.meta.info)
 
-    return model
+    return model, vec

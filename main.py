@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 import vdsh.utility
+from addressing import file_search
 from addressing.metrics import run_recall_test
 from controllers.usersetup import setup_homedir, load_config
 from preprocess import DocumentVectorizer
@@ -52,10 +53,7 @@ if __name__ == "__main__":
 
     # vdsh.utility.train_model(model, 100, 1, dataset_name="20ng_user")
 
-    model: VDSH = vdsh.utility.load_model("kappa_phi")
-
-    x = model.predict(np.ones(shape=(1, 10000)))
-    print(x)
+    file_search.search("kappa_phi", "C:\\Users\\rafal\\semhash", "C:\\Users\\rafal\\semhash\\config.json")
 
     """
     path = settings["model"]["data_home"]
