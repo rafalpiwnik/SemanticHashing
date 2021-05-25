@@ -7,8 +7,11 @@ from bitarray import frozenbitarray
 class MedianHash:
     def __init__(self, z_mean: np.ndarray):
         """Creates a median hash from numpy ndarray"""
-        if z_mean.ndim > 1:
+        if z_mean.ndim > 2:
+            # TODO this is leaky
             raise ValueError(f"Passed latent ndarray is not a vector, shape={z_mean.shape}")
+
+        z_mean = z_mean.flatten()
         self._num_bits = len(z_mean)
 
         median = np.median(z_mean)

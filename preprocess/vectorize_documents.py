@@ -37,9 +37,10 @@ class DocumentVectorizer:
         return X, self.model.get_feature_names()
 
     def transform(self, paths: list[str]):
-        """Uses the fitted model to transform paths into scipy matrix and list of features names (words)"""
+        """Uses the fitted model to transform paths into scipy matrix"""
+        print(f"Running transform on {len(paths)} paths")
         X = self.model.transform(paths)
-        return X, self.model.get_feature_names()
+        return X
 
     @staticmethod
     def save_transform(X, words: list[str], path: Union[str, os.PathLike], dataset_name: str,
