@@ -22,8 +22,9 @@ def search(model_name: str, search_root: Union[str, os.PathLike], example_file_p
     codes_search_target = addressing.medhash_transform(pred_search_target)
     code_example = addressing.MedianHash(pred_example)
 
-    retrieved_indices = addressing.top_k_indices(code_example, pool=codes_search_target, k=5)
-    retrieved = [path for keep, path in zip(retrieved_indices, search_paths) if keep]
+    retrieved_indices = addressing.top_k_indices(code_example, pool=codes_search_target, k=25)
 
-    # TODO Returns 4 but should 5
-    print("s")
+    # TODO complexity
+    retrieved = [search_paths[i] for i in retrieved_indices]
+
+    print(retrieved)
