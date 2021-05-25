@@ -5,7 +5,7 @@ import tensorflow as tf
 import preprocess
 from controllers.usersetup import load_config
 from preprocess import datasets, DocumentVectorizer
-from preprocess.MetaInfo import ModelMetaInfo, MetaInfo
+from preprocess.MetaInfo import ModelMetaInfo
 from vdsh.VDSH import create_encoder, create_decoder, VDSH
 
 
@@ -119,7 +119,8 @@ def load_model(model_name: str) -> tuple[VDSH, DocumentVectorizer]:
     model_home = config["model"]["model_home"]
 
     model = tf.keras.models.load_model(f"{model_home}/{model_name}")
-    mi = MetaInfo.from_file(f"{model_home}/{model_name}")
+    # This is troublesome
+    mi = ModelMetaInfo.from_file(f"{model_home}/{model_name}")
     model.meta = mi
 
     try:

@@ -4,26 +4,7 @@ import os
 from typing import Union
 
 
-class MetaInfo:
-    def __init__(self):
-        self.info = dict()
-
-    def dump(self, dirpath: Union[str, os.PathLike]):
-        date = datetime.datetime.now()
-        date_iso = date.isoformat()
-        self.info["time_saved"] = date_iso
-        with open(dirpath + "/meta.json", "w") as f:
-            json.dump(self.info, f)
-
-    @staticmethod
-    def from_file(dirpath: Union[str, os.PathLike]):
-        with open(dirpath + "/meta.json", "r") as f:
-            result = MetaInfo
-            result.info = json.load(f)
-            return result
-
-
-class DatasetMetaInfo(MetaInfo):
+class DatasetMetaInfo:
     """Meta info dict to be saved with the dataset to provide additional info"""
 
     def __init__(self, name: str, num_train: int, num_test: int, num_labels: int = 0, user: bool = False,
@@ -43,8 +24,22 @@ class DatasetMetaInfo(MetaInfo):
             "time_saved": ""
         }
 
+    @classmethod
+    def from_file(cls, dirpath: Union[str, os.PathLike]):
+        with open(dirpath + "/meta.json", "r") as f:
+            result = cls
+            result.info = json.load(f)
+            return result
 
-class ModelMetaInfo(MetaInfo):
+    def dump(self, dirpath: Union[str, os.PathLike]):
+        date = datetime.datetime.now()
+        date_iso = date.isoformat()
+        self.info["time_saved"] = date_iso
+        with open(dirpath + "/meta.json", "w") as f:
+            json.dump(self.info, f)
+
+
+class ModelMetaInfo():
     """Meta info dict to be saved with the model to provide additional info"""
 
     def __init__(self, name: str, vocab_size: int, hidden_dim: int, latent_dim: int, kl_step: float,
@@ -62,6 +57,7 @@ class ModelMetaInfo(MetaInfo):
             "kl_step": kl_step,
             "dropout_prob": dropout_prob,
             "fit": fit,
+            "epochs": 0,
             "fit_dataset": fit_dataset,
             "fit_time": ""
         }
@@ -71,6 +67,9 @@ class ModelMetaInfo(MetaInfo):
         self.info["fit_time"] = datetime.datetime.now().isoformat()
         self.info["fit_dataset"] = dataset_name
 
+    def set_epochs(self, num_epochs: int):
+        self.info["epochs"] = num_epochs
+
     @property
     def name(self):
         return self.info["name"]
@@ -78,3 +77,17 @@ class ModelMetaInfo(MetaInfo):
     @property
     def dataset_name(self):
         return self.info["fit_dataset"]
+
+    def dump(self, dirpath: Union[str, os.PathLike]):
+        date = datetime.datetime.now()
+        date_iso = date.isoformat()
+        self.info["time_saved"] = date_iso
+        with open(dirpath + "/meta.json", "w") as f:
+            json.dump(self.info, f)
+
+    @classmethod
+    def from_file(cls, dirpath: Union[str, os.PathLike]):
+        with open(dirpath + "/meta.json", "r") as f:
+            result = cls
+            result.info = json.load(f)
+            return result

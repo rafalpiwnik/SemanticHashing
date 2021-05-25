@@ -21,78 +21,6 @@ from preprocess.MetaInfo import DatasetMetaInfo
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
 
 
-# TODO deprecated
-def fetch_dataset(name: str, data_home: Union[str, os.PathLike]):
-    """Fetches a dataset to data_home path and returns a Bunch
-    Parameters
-    ----------
-    name : str
-        Qualified dataset name
-    data_home : str or os.PathLike
-        Output dir for fetched data
-
-    Returns
-    -------
-    sklearn.utils.Bunch
-        Dict-like with keys {data, target} among others
-
-    Raises
-    -------
-    ValueError
-        When dataset name is not supported
-    """
-    if name not in AVAILABLE_DATASETS:
-        raise ValueError("Invalid dataset name")
-    else:
-        try:
-            os.mkdir(f"{data_home}/{name}")
-        except FileExistsError:
-            pass
-
-        dest = f"{data_home}/{name}"
-
-        if name == "20ng":
-            create_20ng(10000)
-        elif name == "rcv1":
-            print(f"Fetching {name}...")
-
-            # create_rcv1(data_home, num_targets=40, vocab_size=15000, num_train=10000, num_test=2000)
-
-
-"""
-class MetaInfo:
-    def __init__(self, name: str, num_train: int, num_test: int, num_labels: int = 0, user: bool = False,
-                 source_dir: Union[str, os.PathLike] = None):
-        assert num_train >= 0
-        assert num_test >= 0
-        assert num_labels >= 0
-
-        self.name = name
-        self.num_train = num_train
-        self.num_test = num_test
-        self.num_labels = num_labels
-        self.user = user
-        self.source_dir = source_dir
-
-        self.info = {
-            "name": self.name,
-            "user_author": self.user,
-            "source_dir": self.source_dir,
-            "num_train": self.num_train,
-            "num_test": self.num_test,
-            "num_labels": self.num_labels,
-            "time_saved": ""
-        }
-
-    def dump(self, path: Union[str, os.PathLike]):
-        date = datetime.datetime.now()
-        date_iso = date.isoformat()
-        self.info["time_saved"] = date_iso
-        with open(path, "w") as f:
-            json.dump(self.info, f)
-            """
-
-
 def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = ""):
     """Creates a user dataset, fits a vectorizer and saves it
 
@@ -295,7 +223,7 @@ def create_rcv1(vocab_size: int, num_train: int = 100000, num_test: int = 20000,
 
         # What is this returning
 
-        mi = MetaInfo(name, num_train, num_test, num_labels)
+        mi = DatasetMetaInfo(name, num_train, num_test, num_labels)
         mi.dump(f"{dest}/meta.json")
 
     except (KeyError, IOError):
