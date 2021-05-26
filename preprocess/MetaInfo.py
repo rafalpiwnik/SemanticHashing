@@ -3,17 +3,17 @@ import json
 import os
 from typing import Union
 
+import numpy as np
+
 
 class DatasetMetaInfo:
     """Meta info dict to be saved with the dataset to provide additional info"""
 
-    def __init__(self, name: str, vocab_size: int, num_train: int, num_test: int = 0, num_labels: int = 0,
+    def __init__(self, name: str, vocab_size: int = np.NAN, num_train: int = np.NAN, num_test: int = 0,
+                 num_labels: int = 0,
                  user: bool = False,
                  source_dir: Union[str, os.PathLike] = None):
         super().__init__()
-        assert num_train >= 0
-        assert num_test >= 0
-        assert num_labels >= 0
 
         self.info = {
             "name": name,
@@ -34,10 +34,13 @@ class DatasetMetaInfo:
     def vocab_size(self):
         return self.info["vocab_size"]
 
+    def set_source_dir(self, dirpath: Union[str, os.PathLike]):
+        self.info["source_dir"] = str(dirpath)
+
     @classmethod
     def from_file(cls, dirpath: Union[str, os.PathLike]):
         with open(dirpath + "/meta.json", "r") as f:
-            result = cls
+            result = DatasetMetaInfo("loaded")
             result.info = json.load(f)
             return result
 
@@ -52,12 +55,9 @@ class DatasetMetaInfo:
 class ModelMetaInfo:
     """Meta info dict to be saved with the model to provide additional info"""
 
-    def __init__(self, name: str, vocab_size: int, hidden_dim: int, latent_dim: int, kl_step: float,
-                 dropout_prob: float, fit_dataset: str = "", fit: bool = False):
+    def __init__(self, name: str, vocab_size: int = np.NAN, hidden_dim: int = np.NAN, latent_dim: int = np.NAN,
+                 kl_step: float = np.NAN, dropout_prob: float = np.NAN, fit_dataset: str = "", fit: bool = False):
         super().__init__()
-        assert vocab_size >= 0
-        assert hidden_dim >= 0
-        assert latent_dim >= 0
 
         self.info = {
             "name": name,
@@ -102,7 +102,7 @@ class ModelMetaInfo:
     @classmethod
     def from_file(cls, dirpath: Union[str, os.PathLike]):
         with open(dirpath + "/meta.json", "r") as f:
-            result = cls
+            result = ModelMetaInfo("loaded")
             result.info = json.load(f)
             return result
 

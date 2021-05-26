@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+import controllers.entity_discovery
 import vdsh.utility
 from addressing import file_search
 from addressing.metrics import run_recall_test
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     HIDDEN_DIM = 1000
     LATENT_DIM = 32
 
-    create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
+    # create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
 
     # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
     # model.compile(optimizer="adam")
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     # vdsh.utility.train_model(model, 100, 10, dataset_name="20ng_user")
 
     # file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",
-        #               "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
+    #               "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
 
     """
     path = settings["model"]["data_home"]
