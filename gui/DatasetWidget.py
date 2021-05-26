@@ -191,6 +191,8 @@ class exampleQMainWindow(QMainWindow):
 
         self.setCentralWidget(self.datasetList)
 
+        self.setMinimumSize(400, 1000)
+
         """
         d1 = DatasetWidget(self.datasetList)
 

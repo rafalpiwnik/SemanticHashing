@@ -6,6 +6,7 @@ from controllers import usersetup
 from preprocess.MetaInfo import DatasetMetaInfo
 
 META_FILE_NAME = "meta.json"
+DATA_FILE_NAME = "data.hdf5"
 
 
 def scan_datasets() -> list[DatasetMetaInfo]:
@@ -27,11 +28,13 @@ def scan_datasets() -> list[DatasetMetaInfo]:
 
         name = path.split("\\")[-1]
 
-        if META_FILE_NAME in files:
-            result.append(DatasetMetaInfo.from_file(path))
-        else:
+        if META_FILE_NAME in files and DATA_FILE_NAME in files:
+            mi = DatasetMetaInfo.from_file(path)
+        elif DATA_FILE_NAME in files:
             mi = DatasetMetaInfo(name, np.NAN, np.NAN, np.NAN)
-            mi.set_source_dir(path)
-            result.append(mi)
+        else:
+            mi = DatasetMetaInfo.undefined_preset(name)
+
+        result.append(mi)
 
     return result

@@ -40,9 +40,15 @@ class DatasetMetaInfo:
     @classmethod
     def from_file(cls, dirpath: Union[str, os.PathLike]):
         with open(dirpath + "/meta.json", "r") as f:
-            result = DatasetMetaInfo("loaded")
+            result = cls("loaded")
             result.info = json.load(f)
             return result
+
+    @classmethod
+    def undefined_preset(cls, name: str):
+        result = cls(name)
+        result.info = {"name": name}
+        return result
 
     def dump(self, dirpath: Union[str, os.PathLike]):
         date = datetime.datetime.now()
