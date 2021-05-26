@@ -41,40 +41,37 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
         Saves the dataset and the vectorizer to data_home
 
     """
+    data_home = load_config()["model"]["data_home"]
+    dest = f"{data_home}/{name}"
+
     try:
-        data_home = load_config()["model"]["data_home"]
-        dest = f"{data_home}/{name}"
+        os.mkdir(f"{data_home}/{name}")
+    except FileExistsError:
+        pass
 
-        try:
-            os.mkdir(f"{data_home}/{name}")
-        except FileExistsError:
-            pass
+    print("Getting paths...")
+    paths = preprocess.get_paths(root_dir, filter_extension=file_ext)
+    print(f"Found {len(paths)} suitable files at {root_dir}")
 
-        print("Getting paths...")
-        paths = preprocess.get_paths(root_dir, filter_extension=file_ext)
-        print(f"Found {len(paths)} suitable files at {root_dir}")
+    print("Vectorizing...")
+    v = DocumentVectorizer(vocab_size)
+    X, words = v.fit_transform(paths)
 
-        print("Vectorizing...")
-        v = DocumentVectorizer(vocab_size)
-        X, words = v.fit_transform(paths)
+    print("Saving dataset...")
+    with h5py.File(f"{dest}/data.hdf5", "w") as hf:
+        hf.create_dataset(name="train", data=X.toarray(), compression="gzip")
 
-        print("Saving dataset...")
-        with h5py.File(f"{dest}/data.hdf5", "w") as hf:
-            hf.create_dataset(name="train", data=X.toarray(), compression="gzip")
+    preprocess.save_vectorizer(v, dirpath=f"{dest}")
 
-        preprocess.save_vectorizer(v, dirpath=f"{dest}")
+    mi = DatasetMetaInfo(name,
+                         vocab_size,
+                         num_train=X.shape[0],
+                         num_test=0,
+                         num_labels=0,
+                         user=True,
+                         source_dir=root_dir)
 
-        mi = DatasetMetaInfo(name,
-                             num_train=X.shape[0],
-                             num_test=0,
-                             num_labels=0,
-                             user=True,
-                             source_dir=root_dir)
-
-        mi.dump(f"{dest}/meta.json")
-
-    except (KeyError, IOError):
-        print("Couldn't read config.json file")
+    mi.dump(dest)
 
 
 def extract_train(dataset_name: str):
@@ -145,11 +142,12 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
             hf.create_dataset(name="test_labels", data=test.target)
 
         mi = DatasetMetaInfo("20ng",
+                             vocab_size,
                              num_train=sparse_train_tfidf.shape[0],
                              num_test=sparse_test_tfidf.shape[0],
                              num_labels=1)
 
-        mi.dump(f"{dest}/meta.json")
+        mi.dump(dest)
 
     except (KeyError, IOError):
         print("Couldn't read config.json file")
@@ -223,8 +221,8 @@ def create_rcv1(vocab_size: int, num_train: int = 100000, num_test: int = 20000,
 
         # What is this returning
 
-        mi = DatasetMetaInfo(name, num_train, num_test, num_labels)
-        mi.dump(f"{dest}/meta.json")
+        mi = DatasetMetaInfo(name, vocab_size, num_train, num_test, num_labels)
+        mi.dump(dest)
 
     except (KeyError, IOError):
         print("Couldn't read config.json file")

@@ -7,7 +7,8 @@ from typing import Union
 class DatasetMetaInfo:
     """Meta info dict to be saved with the dataset to provide additional info"""
 
-    def __init__(self, name: str, num_train: int, num_test: int, num_labels: int = 0, user: bool = False,
+    def __init__(self, name: str, vocab_size: int, num_train: int, num_test: int = 0, num_labels: int = 0,
+                 user: bool = False,
                  source_dir: Union[str, os.PathLike] = None):
         super().__init__()
         assert num_train >= 0
@@ -18,11 +19,20 @@ class DatasetMetaInfo:
             "name": name,
             "user_author": user,
             "source_dir": source_dir,
+            "vocab_size": vocab_size,
             "num_train": num_train,
             "num_test": num_test,
             "num_labels": num_labels,
             "time_saved": ""
         }
+
+    @property
+    def name(self):
+        return self.info["name"]
+
+    @property
+    def vocab_size(self):
+        return self.info["vocab_size"]
 
     @classmethod
     def from_file(cls, dirpath: Union[str, os.PathLike]):
@@ -39,7 +49,7 @@ class DatasetMetaInfo:
             json.dump(self.info, f)
 
 
-class ModelMetaInfo():
+class ModelMetaInfo:
     """Meta info dict to be saved with the model to provide additional info"""
 
     def __init__(self, name: str, vocab_size: int, hidden_dim: int, latent_dim: int, kl_step: float,
@@ -71,6 +81,10 @@ class ModelMetaInfo():
         self.info["epochs"] = num_epochs
 
     @property
+    def vocab_size(self):
+        return self.info["vocab_size"]
+
+    @property
     def name(self):
         return self.info["name"]
 
@@ -91,3 +105,13 @@ class ModelMetaInfo():
             result = cls
             result.info = json.load(f)
             return result
+
+
+def are_compatible(data: DatasetMetaInfo, model: ModelMetaInfo):
+    """Returns true iff model vocab_dim and data vocab_dim are a match"""
+    return data.vocab_size == model.vocab_size
+
+
+def are_native(data: DatasetMetaInfo, model: ModelMetaInfo):
+    """Returns true if model has been trained on the specified data"""
+    return model.dataset_name == data.name
