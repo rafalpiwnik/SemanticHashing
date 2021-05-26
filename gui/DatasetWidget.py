@@ -1,16 +1,13 @@
 import sys
 from time import sleep
 
-from PyQt5 import QtGui, QtWidgets, QtCore
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QMainWindow, QApplication, QListWidgetItem, \
-    QListWidget, QFormLayout
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget
 
 import controllers.entity_discovery
-from controllers.usersetup import load_config
 from preprocess.MetaInfo import DatasetMetaInfo
-from preprocess.datasets import create_20ng
 
 
 class DatasetWidget(QtWidgets.QWidget):
@@ -55,36 +52,27 @@ class DatasetWidget(QtWidgets.QWidget):
         # FIELDS
 
         self.name = QLabel("loading...")
-        self.name.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.name.setMinimumSize(100, 20)
 
         self.train = QLabel("loading...")
-        self.train.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.train.setMinimumSize(100, 20)
 
         self.test = QLabel("loading...")
-        self.test.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.test.setMinimumSize(100, 20)
 
         self.vocabulary = QLabel("loading...")
-        self.vocabulary.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.vocabulary.setMinimumSize(100, 20)
 
         self.kind = QLabel("loading...")
-        self.kind.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.kind.setMinimumSize(100, 20)
 
         self.author = QLabel("loading...")
-        self.author.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.author.setMinimumSize(100, 20)
 
         self.date = QLabel("loading...")
-        self.date.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.date.setMinimumSize(100, 20)
 
         # FIELDS AND STYLES
 
         self.fields = [self.name, self.train, self.test, self.vocabulary, self.kind, self.author, self.date]
+
+        for f in self.fields:
+            f.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+            f.setMinimumSize(100, 20)
+
         self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
         self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
 

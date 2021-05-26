@@ -41,7 +41,7 @@ def precision(actual_target: int, train_targets: np.ndarray, indices: list[int],
 
 
 def top_k_indices(code: MedianHash, pool: list[MedianHash], k: int = 100):
+    # TODO rework
     distances = np.array([code.hamming(p) for p in pool])
-    # indices = distances.argsort()[:k]
     indices = heapq.nsmallest(k, range(len(distances)), key=lambda x: distances[x])
     return indices

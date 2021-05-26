@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-import controllers.entity_discovery
 import vdsh.utility
 from addressing import file_search
 from addressing.metrics import run_recall_test
@@ -48,18 +47,8 @@ if __name__ == "__main__":
     # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
     # model.compile(optimizer="adam")
 
+    # model = vdsh.utility.load_model("20ng_user")
     # vdsh.utility.train_model(model, 100, 10, dataset_name="20ng_user")
 
     # file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",
     #               "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
-
-    """
-    path = settings["model"]["data_home"]
-    with h5py.File(f"{path}/20ng_user/data.hdf5", "r") as hf:
-        train = np.array(hf["train"])
-        train_labels = np.array(hf["train_labels"])
-        test = np.array(hf["test"])
-        test_labels = np.array(hf["test_labels"])
-
-        train_mock(train, None, None, None)
-    """
