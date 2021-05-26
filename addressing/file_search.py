@@ -2,7 +2,7 @@ import os
 from typing import Union
 
 import addressing
-import preprocess
+import storage
 import vdsh.utility
 
 
@@ -13,7 +13,7 @@ def search(model_name: str, search_root: Union[str, os.PathLike], example_file_p
 
     print(model.meta.name)
 
-    search_paths = preprocess.get_paths(search_root)
+    search_paths = storage.get_paths(search_root)
 
     search_target = vectorizer.transform(search_paths).toarray()
     example = vectorizer.transform([example_file_path]).toarray()

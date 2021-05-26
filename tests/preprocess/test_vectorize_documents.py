@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from preprocess.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer, \
+from storage.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer, \
     load_vectorizer, save_vectorizer
 
 

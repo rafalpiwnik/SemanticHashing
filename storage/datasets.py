@@ -13,10 +13,10 @@ import scipy.sparse.csr
 from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-import preprocess
+import storage
 from controllers.usersetup import load_config
-from preprocess import DocumentVectorizer
-from preprocess.MetaInfo import DatasetMetaInfo
+from storage import DocumentVectorizer
+from storage.MetaInfo import DatasetMetaInfo
 
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
 
@@ -50,7 +50,7 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
         pass
 
     print("Getting paths...")
-    paths = preprocess.get_paths(root_dir, filter_extension=file_ext)
+    paths = storage.get_paths(root_dir, filter_extension=file_ext)
     print(f"Found {len(paths)} suitable files at {root_dir}")
 
     print("Vectorizing...")
@@ -61,7 +61,7 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
     with h5py.File(f"{dest}/data.hdf5", "w") as hf:
         hf.create_dataset(name="train", data=X.toarray(), compression="gzip")
 
-    preprocess.save_vectorizer(v, dirpath=f"{dest}")
+    storage.save_vectorizer(v, dirpath=f"{dest}")
 
     mi = DatasetMetaInfo(name,
                          vocab_size,

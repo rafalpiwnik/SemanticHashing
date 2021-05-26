@@ -6,8 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget
 
-import controllers.entity_discovery
-from preprocess.MetaInfo import DatasetMetaInfo
+from storage.MetaInfo import DatasetMetaInfo
 
 
 class DatasetWidget(QtWidgets.QWidget):

@@ -6,7 +6,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget
 
 from controllers.usersetup import load_config
-from preprocess.MetaInfo import ModelMetaInfo
+from storage.MetaInfo import ModelMetaInfo
 
 
 class ModelWidget(QtWidgets.QWidget):

@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 
-from preprocess.MetaInfo import ModelMetaInfo
+from storage.MetaInfo import ModelMetaInfo
 
 KL_STEP = 1.0 / 5000.0
 DROPOUT_PROB = 0.1

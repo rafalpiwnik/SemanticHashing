@@ -1,9 +1,10 @@
 import os
+from glob import glob
 
 import numpy as np
 
 from controllers import usersetup
-from preprocess.MetaInfo import DatasetMetaInfo
+from storage.MetaInfo import DatasetMetaInfo, ModelMetaInfo
 
 META_FILE_NAME = "meta.json"
 DATA_FILE_NAME = "data.hdf5"
@@ -23,9 +24,6 @@ def scan_datasets() -> list[DatasetMetaInfo]:
     for d in datasets:
         path, _, files = d
 
-        print(path)
-        print(files)
-
         name = path.split("\\")[-1]
 
         if META_FILE_NAME in files and DATA_FILE_NAME in files:
@@ -36,5 +34,28 @@ def scan_datasets() -> list[DatasetMetaInfo]:
             mi = DatasetMetaInfo.undefined_preset(name)
 
         result.append(mi)
+
+    return result
+
+
+def scan_models() -> list[ModelMetaInfo]:
+    """Returns the list of ModelMetaInfo for dirs in model_home,
+    if there is no meta.json provided name and path is inferred"""
+    model_home = usersetup.load_config()["model"]["model_home"]
+
+    result: list[ModelMetaInfo] = list()
+
+    # Get the list of paths and dataset names, skip the first dir (the parent dir)
+    model_paths = glob(f"{model_home}/*/")
+
+    for path in model_paths:
+        name = path.split("\\")[-2]
+
+        try:
+            mi = ModelMetaInfo.from_file(path)
+            result.append(mi)
+        except FileNotFoundError:
+            mi = ModelMetaInfo(name)
+            result.append(mi)
 
     return result

@@ -1,2 +1,0 @@
-from preprocess.vectorize_documents import DocumentVectorizer
-from preprocess.vectorize_documents import get_paths, save_vectorizer, load_vectorizer

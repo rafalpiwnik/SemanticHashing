@@ -3,8 +3,8 @@ import tensorflow as tf
 import vdsh.utility
 from addressing import file_search
 from addressing.metrics import run_recall_test
-from preprocess import DocumentVectorizer
-from preprocess.datasets import create_user_dataset
+from storage import DocumentVectorizer
+from storage.datasets import create_user_dataset
 from vdsh import create_vdsh
 
 

@@ -2,10 +2,10 @@ import os
 
 import tensorflow as tf
 
-import preprocess
+import storage
 from controllers.usersetup import load_config
-from preprocess import datasets, DocumentVectorizer
-from preprocess.MetaInfo import ModelMetaInfo
+from storage import datasets, DocumentVectorizer
+from storage.MetaInfo import ModelMetaInfo
 from vdsh.VDSH import create_encoder, create_decoder, VDSH
 
 
@@ -124,7 +124,7 @@ def load_model(model_name: str) -> tuple[VDSH, DocumentVectorizer]:
     model.meta = mi
 
     try:
-        vec = preprocess.load_vectorizer(f"{model_home}/{model_name}")
+        vec = storage.load_vectorizer(f"{model_home}/{model_name}")
     except (FileNotFoundError, IOError):
         print("Vectorizer not found")
         vec = None
