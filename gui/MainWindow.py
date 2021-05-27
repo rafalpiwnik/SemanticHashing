@@ -13,6 +13,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent=parent)
         self.setupUi(self)
 
+        # self.trainMixingGridLayout.addWidget(ModelWidget(), 0, 1)
+        self.trainDatasetSpace.addWidget(DatasetWidget())
+        self.trainModelSpace.addWidget(ModelWidget())
+
     def set_datasets(self, widgets: list[DatasetWidget]):
         for w in widgets:
             item = QtWidgets.QListWidgetItem()

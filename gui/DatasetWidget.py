@@ -1,10 +1,11 @@
 import sys
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, QSizePolicy
 
+from storage import entity_discovery
 from storage.MetaInfo import DatasetMetaInfo
 
 
@@ -92,6 +93,19 @@ class DatasetWidget(QtWidgets.QWidget):
 
         # SETUP
         self.reset_state()
+
+    def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
+        menu = QMenu(self)
+
+        rename = QAction("Rename", self)
+        openSrc = QAction("Open location", self)
+        remove = QAction("Remove", self)
+
+        menu.addAction(rename)
+        menu.addAction(openSrc)
+        menu.addAction(remove)
+
+        action = menu.exec_(self.mapToGlobal(event.pos()))
 
     def set_default_icon(self):
         self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset.png"))
@@ -194,7 +208,7 @@ class exampleQMainWindow(QMainWindow):
         """
 
     def scan_fill(self):
-        dss = controllers.entity_discovery.scan_datasets()
+        dss = entity_discovery.scan_datasets()
 
         self.datasetList.clear()
 
