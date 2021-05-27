@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-from storage.vectorize_documents import get_paths, vectorize_documents, save_vectorized, DocumentVectorizer, \
-    load_vectorizer, save_vectorizer
+from storage import get_paths
 
 
 @pytest.fixture
@@ -29,7 +28,6 @@ def pangram_words():
 @pytest.fixture
 def pangram_no_stopwords():
     return ["quick", "brown", "fox", "jumps", "lazy", "dog"]
-
 
 def test_get_paths_no_root_dir(no_such_dir):
     actual = get_paths(f"resources/{no_such_dir}")

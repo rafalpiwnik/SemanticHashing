@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 
 import vdsh.utility
@@ -47,7 +48,13 @@ if __name__ == "__main__":
     # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
     # model.compile(optimizer="adam")
 
-    # model = vdsh.utility.load_model("20ng_user")
+    """
+    Dont have to compile
+    model, vec = vdsh.utility.load_model("20ng_user")
+    predict = model.predict(np.zeros(shape=(1,10000)))
+    print(predict)
+    """
+
     # vdsh.utility.train_model(model, 100, 10, dataset_name="20ng_user")
 
     # file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",

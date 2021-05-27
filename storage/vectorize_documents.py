@@ -93,6 +93,7 @@ def save_vectorizer(vectorizer: DocumentVectorizer, dirpath: Union[str, os.PathL
 def load_vectorizer(dirpath: Union[str, os.PathLike], name: str = "vectorizer.pkl"):
     """Returns a DocumentVectorizer loaded from file at dirpath/name"""
     with open(dirpath + "/" + name, "rb") as f:
+        print(dirpath)
         data: DocumentVectorizer = pickle.load(f)
         return data
 
