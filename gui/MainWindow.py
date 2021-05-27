@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import pyqtSlot
 
 from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_widgets
 from gui.DatasetWidget import DatasetWidget
@@ -15,14 +16,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # self.trainMixingGridLayout.addWidget(ModelWidget(), 0, 1)
         dw = DatasetWidget()
-        dw.mark_mismatch_error()
+        # dw.mark_mismatch_error()
 
-        self.trainDatasetSpace.addWidget(dw)
+        self.trainDatasetStack.addWidget(dw)
+        self.trainDatasetStack.setCurrentWidget(dw)
 
         mw = ModelWidget()
-        mw.mark_mismatch_error()
+        # mw.mark_mismatch_error()
 
-        self.trainModelSpace.addWidget(mw)
+        self.trainModelStack.addWidget(mw)
+        self.trainModelStack.setCurrentWidget(mw)
+
+        # SIGNALS / SLOTS
+        self.datasetList.itemDoubleClicked.connect(self.update_dataset)
+
+    def update_dataset(self, item: QtWidgets.QListWidgetItem):
+        """Slot, changes currently displayed item"""
+        list_widget: DatasetWidget = self.datasetList.itemWidget(item)
+        cloned_widget = list_widget.clone()
+
+        old_widget = self.trainDatasetStack.currentWidget()
+        self.trainDatasetStack.addWidget(cloned_widget)
+        self.trainDatasetStack.setCurrentWidget(cloned_widget)
+        self.trainDatasetStack.removeWidget(old_widget)
 
     def set_datasets(self, widgets: list[DatasetWidget]):
         for w in widgets:

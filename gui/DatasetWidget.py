@@ -31,43 +31,31 @@ class DatasetWidget(QtWidgets.QWidget):
         self.label_font.setWeight(75)
 
         self.nameLabel = QLabel("Name")
-        self.nameLabel.setFont(self.label_font)
-
         self.vocabLabel = QLabel("Vocabulary size")
-        self.vocabLabel.setFont(self.label_font)
-
         self.trainLabel = QLabel("Train size")
-        self.trainLabel.setFont(self.label_font)
-
         self.testLabel = QLabel("Test size")
-        self.testLabel.setFont(self.label_font)
-
         self.kindLabel = QLabel("Label kind")
-        self.kindLabel.setFont(self.label_font)
-
         self.authorLabel = QLabel("Author")
-        self.authorLabel.setFont(self.label_font)
+
+        self.labels = [self.nameLabel, self.vocabLabel, self.trainLabel, self.testLabel, self.kindLabel,
+                       self.authorLabel]
+
+        for lab in self.labels:
+            lab.setFont(self.label_font)
 
         # FIELDS
 
         self.name = QLabel("loading...")
-
         self.train = QLabel("loading...")
-
         self.test = QLabel("loading...")
-
         self.vocabulary = QLabel("loading...")
-
         self.kind = QLabel("loading...")
-
         self.author = QLabel("loading...")
-
         self.date = QLabel("loading...")
-
-        # FIELDS AND STYLES
 
         self.fields = [self.name, self.train, self.test, self.vocabulary, self.kind, self.author, self.date]
 
+        # Set style for fields
         for f in self.fields:
             f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
@@ -93,6 +81,13 @@ class DatasetWidget(QtWidgets.QWidget):
 
         # SETUP
         self.reset_state()
+
+    def clone(self):
+        # TODO ICON left Unchanged
+        copy = DatasetWidget()
+        for src_field, dest_field in zip(self.fields, copy.fields):
+            dest_field.setText(src_field.text())
+        return copy
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         menu = QMenu(self)

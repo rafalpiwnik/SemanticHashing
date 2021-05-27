@@ -48,14 +48,11 @@ if __name__ == "__main__":
     # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
     # model.compile(optimizer="adam")
 
-    """
-    Dont have to compile
-    model, vec = vdsh.utility.load_model("20ng_user")
-    predict = model.predict(np.zeros(shape=(1,10000)))
-    print(predict)
-    """
+    # model, vec = vdsh.utility.load_model("20ng_user")
+    # predict = model.predict(np.zeros(shape=(1, 10000)))
+    # print(predict)
 
     # vdsh.utility.train_model(model, 100, 10, dataset_name="20ng_user")
 
-    # file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",
-    #               "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
+    file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",
+                       "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
