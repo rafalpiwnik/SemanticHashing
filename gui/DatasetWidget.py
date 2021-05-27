@@ -1,5 +1,4 @@
 import sys
-from time import sleep
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
@@ -69,8 +68,7 @@ class DatasetWidget(QtWidgets.QWidget):
         self.fields = [self.name, self.train, self.test, self.vocabulary, self.kind, self.author, self.date]
 
         for f in self.fields:
-            f.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-            f.setMinimumSize(100, 20)
+            f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
         self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'

@@ -59,8 +59,7 @@ class ModelWidget(QtWidgets.QWidget):
         self.fields = [self.name, self.vocab, self.hiddenDim, self.latentDim, self.klStep, self.dropout, self.fit]
 
         for f in self.fields:
-            f.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-            f.setMinimumSize(100, 20)
+            f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
         self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
@@ -172,8 +171,6 @@ class exampleQMainWindow(QMainWindow):
 
         self.datasetList.addItem(item)
         self.datasetList.setItemWidget(item, model1)
-
-        self.setCentralWidget(self.datasetList)
 
         mi = ModelMetaInfo.from_file(load_config()["model"]["model_home"] + "/20ng_user")
         model1.set_fields(mi)
