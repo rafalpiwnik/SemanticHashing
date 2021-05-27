@@ -14,8 +14,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         # self.trainMixingGridLayout.addWidget(ModelWidget(), 0, 1)
-        self.trainDatasetSpace.addWidget(DatasetWidget())
-        self.trainModelSpace.addWidget(ModelWidget())
+        dw = DatasetWidget()
+        dw.mark_mismatch_error()
+
+        self.trainDatasetSpace.addWidget(dw)
+
+        mw = ModelWidget()
+        mw.mark_mismatch_error()
+
+        self.trainModelSpace.addWidget(mw)
 
     def set_datasets(self, widgets: list[DatasetWidget]):
         for w in widgets:
