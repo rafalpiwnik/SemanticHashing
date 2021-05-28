@@ -38,6 +38,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # DATASETS LIST
         self.datasetList.itemDoubleClicked.connect(self.update_current_dataset)
 
+        # MODELS LIST
+        self.modelList.itemDoubleClicked.connect(self.update_current_model)
+
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
         """Changes currently displayed item after double click on it"""

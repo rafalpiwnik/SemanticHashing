@@ -2,16 +2,20 @@ import sys
 from abc import ABC
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QGraphicsOpacityEffect
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QGraphicsOpacityEffect, \
+    QMenu, QAction
 
+from controllers import controller
 from controllers.usersetup import load_config
 from gui.EntityWidget import EntityWidget
 from storage.MetaInfo import ModelMetaInfo
 
 
 class ModelWidget(QtWidgets.QWidget, EntityWidget):
+    modelRemoved = pyqtSignal()
+
     def __init__(self, parent=None):
         super(ModelWidget, self).__init__(parent)
 
@@ -79,6 +83,36 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
 
         # SETUP
         self.reset_state()
+
+    def clone(self):
+        # ICON left Unchanged
+        copy = ModelWidget()
+        for src_field, dest_field in zip(self.fields, copy.fields):
+            dest_field.setText(src_field.text())
+        return copy
+
+    def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
+        # Can open context menu only when main window is set
+        menu = QMenu(self)
+
+        openSrc = QAction("Open location", self)
+        remove = QAction("Remove", self)
+
+        remove.triggered.connect(self.make_remove_dataset)
+
+        menu.addAction(openSrc)
+        menu.addAction(remove)
+
+        action = menu.exec_(self.mapToGlobal(event.pos()))
+
+    @pyqtSlot()
+    def make_remove_model(self):
+        success = controller.remove_dataset(self.name.text())
+        if success:
+            self.modelRemoved.emit()
+        else:
+            error_dialog = QtWidgets.QErrorMessage()
+            error_dialog.showMessage("Cannot remove dataset")
 
     def set_default_icon(self):
         self.iconLabel.setPixmap(QtGui.QPixmap("../resources/model.png"))

@@ -81,7 +81,7 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.reset_state()
 
     def clone(self):
-        # TODO ICON left Unchanged
+        # ICON left Unchanged
         copy = DatasetWidget()
         for src_field, dest_field in zip(self.fields, copy.fields):
             dest_field.setText(src_field.text())
