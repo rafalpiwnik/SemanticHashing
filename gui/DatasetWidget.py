@@ -1,22 +1,22 @@
 import sys
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, QSizePolicy
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, \
+    QGraphicsOpacityEffect
 
-import controllers.controller
 from controllers import controller
+from gui.EntityWidget import EntityWidget
 from storage import entity_discovery
 from storage.MetaInfo import DatasetMetaInfo
 
 
-class DatasetWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None, mw=None):
-        super(DatasetWidget, self).__init__(parent)
+class DatasetWidget(QtWidgets.QWidget, EntityWidget):
+    datasetRemoved = pyqtSignal()
 
-        # main window
-        self.mw = mw
+    def __init__(self, parent=None):
+        super(DatasetWidget, self).__init__(parent)
 
         self.hLayout = QtWidgets.QHBoxLayout()
 
@@ -30,10 +30,6 @@ class DatasetWidget(QtWidgets.QWidget):
         self.iconLabel = QLabel("dataset-icon")
 
         # LABELS
-
-        self.label_font = QFont()
-        self.label_font.setBold(False)
-        self.label_font.setWeight(75)
 
         self.nameLabel = QLabel("Name")
         self.vocabLabel = QLabel("Vocabulary size")
@@ -64,9 +60,6 @@ class DatasetWidget(QtWidgets.QWidget):
         for f in self.fields:
             f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
-        self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
-
         # ADDING ROWS
 
         self.formLayout.addRow(self.nameLabel, self.name)
@@ -96,23 +89,23 @@ class DatasetWidget(QtWidgets.QWidget):
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         # Can open context menu only when main window is set
-        if self.mw:
-            menu = QMenu(self)
+        menu = QMenu(self)
 
-            openSrc = QAction("Open location", self)
-            remove = QAction("Remove", self)
+        openSrc = QAction("Open location", self)
+        remove = QAction("Remove", self)
 
-            remove.triggered.connect(self.make_remove_dataset)
+        remove.triggered.connect(self.make_remove_dataset)
 
-            menu.addAction(openSrc)
-            menu.addAction(remove)
+        menu.addAction(openSrc)
+        menu.addAction(remove)
 
-            action = menu.exec_(self.mapToGlobal(event.pos()))
+        action = menu.exec_(self.mapToGlobal(event.pos()))
 
+    @pyqtSlot()
     def make_remove_dataset(self):
         success = controller.remove_dataset(self.name.text())
         if success:
-            self.mw.update_datasets()
+            self.datasetRemoved.emit()
         else:
             error_dialog = QtWidgets.QErrorMessage()
             error_dialog.showMessage("Cannot remove dataset")
@@ -121,7 +114,7 @@ class DatasetWidget(QtWidgets.QWidget):
         self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset.png"))
 
     def set_bad_icon(self):
-        self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset-bad.png"))
+        self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset-inactive-bad.png"))
 
     def set_inactive_icon(self):
         self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset-inactive.png"))
@@ -131,22 +124,11 @@ class DatasetWidget(QtWidgets.QWidget):
             f.setStyleSheet(self.fieldStyle)
         self.set_default_icon()
 
-    def mark_not_parsable(self):
-        self.set_bad_icon()
-
-        for f in self.fields:
-            f.setText("???")
-            f.setStyleSheet(self.fieldErrorStyle)
-
     def mark_mismatch_error(self, kind: str = "vocab_size"):
         self.set_inactive_icon()
 
         if kind == "vocab_size":
             self.vocabulary.setStyleSheet(self.fieldErrorStyle)
-
-    def mark_field_unknown(self, field):
-        field.setStyleSheet(self.fieldErrorStyle)
-        field.setText("???")
 
     def set_fields(self, mi: DatasetMetaInfo):
         try:
@@ -201,21 +183,6 @@ class exampleQMainWindow(QMainWindow):
         self.setCentralWidget(self.datasetList)
 
         self.setMinimumSize(400, 1000)
-
-        """
-        d1 = DatasetWidget(self.datasetList)
-
-        item = QListWidgetItem(self.datasetList)
-        item.setSizeHint(d1.sizeHint())
-
-        self.datasetList.addItem(item)
-        self.datasetList.setItemWidget(item, d1)
-
-        self.setCentralWidget(self.datasetList)
-
-        mi = DatasetMetaInfo.from_file(load_config()["model"]["data_home"] + "/20ng_user")
-        d1.set_fields(mi)
-        """
 
     def scan_fill(self):
         dss = entity_discovery.scan_datasets()

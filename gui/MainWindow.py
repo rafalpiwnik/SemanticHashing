@@ -1,8 +1,9 @@
 import sys
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import pyqtSlot, QEvent
+from PyQt5.QtCore import pyqtSlot, QEvent, Qt
 
+from controllers import controller
 from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_widgets
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
@@ -15,15 +16,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent=parent)
         self.setupUi(self)
 
-        # self.trainMixingGridLayout.addWidget(ModelWidget(), 0, 1)
-        dw = DatasetWidget()
-        # dw.mark_mismatch_error()
+        # DATASET STACKS
+        self.datasetStacks = [self.trainDatasetStack]
+        self.modelStacks = [self.trainModelStack]
 
+        # DATASET WIDGET TRAIN STACK
+        dw = DatasetWidget()
+        dw.make_prompt_preset()
+        dw.setContextMenuPolicy(Qt.PreventContextMenu)
         self.trainDatasetStack.addWidget(dw)
         self.trainDatasetStack.setCurrentWidget(dw)
 
         mw = ModelWidget()
-        # mw.mark_mismatch_error()
 
         self.trainModelStack.addWidget(mw)
         self.trainModelStack.setCurrentWidget(mw)
@@ -34,15 +38,54 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # DATASETS LIST
         self.datasetList.itemDoubleClicked.connect(self.update_current_dataset)
 
+    @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
-        """Slot, changes currently displayed item"""
+        """Changes currently displayed item after double click on it"""
         list_widget: DatasetWidget = self.datasetList.itemWidget(item)
         cloned_widget = list_widget.clone()
+        cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
 
-        old_widget = self.trainDatasetStack.currentWidget()
-        self.trainDatasetStack.addWidget(cloned_widget)
-        self.trainDatasetStack.setCurrentWidget(cloned_widget)
-        self.trainDatasetStack.removeWidget(old_widget)
+        for stack in self.datasetStacks:
+            old_widget = stack.currentWidget()
+            stack.addWidget(cloned_widget)
+            stack.setCurrentWidget(cloned_widget)
+            stack.removeWidget(old_widget)
+
+    def verify_current_dataset(self):
+        for stack in self.datasetStacks:
+            current: DatasetWidget = stack.currentWidget()
+            exists = controller.check_dataset_available(current.name.text())
+            if not exists:
+                dw = DatasetWidget()
+                dw.make_prompt_preset()
+                dw.setContextMenuPolicy(Qt.PreventContextMenu)
+                stack.addWidget(dw)
+                stack.setCurrentWidget(dw)
+                stack.removeWidget(current)
+
+    @pyqtSlot(QtWidgets.QListWidgetItem)
+    def update_current_model(self, item: QtWidgets.QListWidgetItem):
+        list_widget: ModelWidget = self.modelList.itemWidget(item)
+        cloned_widget = list_widget.clone()
+        cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
+
+        for stack in self.modelStacks:
+            old_widget = stack.currentWidget()
+            stack.addWidget(cloned_widget)
+            stack.setCurrentWidget(cloned_widget)
+            stack.removeWidget(old_widget)
+
+    def verify_current_model(self):
+        for stack in self.modelStacks:
+            current: ModelWidget = stack.currentWidget()
+            exists = controller.check_dataset_available(current.name.text())
+            if not exists:
+                mw = ModelWidget()
+                mw.make_prompt_preset()
+                mw.setContextMenuPolicy(Qt.PreventContextMenu)
+                stack.addWidget(mw)
+                stack.setCurrentWidget(mw)
+                stack.removeWidget(current)
 
     @pyqtSlot()
     def open_dataset_wizard(self):
@@ -52,18 +95,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def update_datasets(self):
+        self.verify_current_dataset()
+
         widgets = fetch_datasets_to_widgets()
 
         self.datasetList.clear()
 
         for w in widgets:
-            w.mw = self
+            w.datasetRemoved.connect(self.update_datasets)
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint(w.sizeHint())
             self.datasetList.addItem(item)
             self.datasetList.setItemWidget(item, w)
-
-        # TODO this has to check if dataset in the mixing table exitsts as well
 
     def set_models(self, widgets: list[ModelWidget]):
         for w in widgets:
@@ -71,18 +114,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             item.setSizeHint(w.sizeHint())
             self.modelList.addItem(item)
             self.modelList.setItemWidget(item, w)
-
-    """
-    def eventFilter(self, source, event):
-        if event.type() == QEvent.ContextMenu and source is self.datasetList:
-            menu = QtWidgets.QMenu()
-            menu.addAction('Open Window')
-            if menu.exec_(event.globalPos()):
-                item = source.itemAt(event.pos())
-                print(item.text())
-            return True
-        return True
-    """
 
 
 if __name__ == "__main__":

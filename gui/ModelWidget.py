@@ -1,15 +1,17 @@
 import sys
+from abc import ABC
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget
+from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QGraphicsOpacityEffect
 
 from controllers.usersetup import load_config
+from gui.EntityWidget import EntityWidget
 from storage.MetaInfo import ModelMetaInfo
 
 
-class ModelWidget(QtWidgets.QWidget):
+class ModelWidget(QtWidgets.QWidget, EntityWidget):
     def __init__(self, parent=None):
         super(ModelWidget, self).__init__(parent)
 
@@ -25,10 +27,6 @@ class ModelWidget(QtWidgets.QWidget):
         self.iconLabel = QLabel("model-icon")
 
         # LABELS
-
-        self.label_font = QFont()
-        self.label_font.setBold(False)
-        self.label_font.setWeight(75)
 
         self.nameLabel = QLabel("Name")
         self.vocabLabel = QLabel("Vocabulary dim")
@@ -60,9 +58,6 @@ class ModelWidget(QtWidgets.QWidget):
 
         for f in self.fields:
             f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-        self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
-        self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
 
         # ADDING ROWS
 
@@ -99,22 +94,11 @@ class ModelWidget(QtWidgets.QWidget):
             f.setStyleSheet(self.fieldStyle)
         self.set_default_icon()
 
-    def mark_not_parsable(self):
-        self.set_bad_icon()
-
-        for f in self.fields:
-            f.setText("???")
-            f.setStyleSheet(self.fieldErrorStyle)
-
     def mark_mismatch_error(self, kind: str = "vocab_size"):
         self.set_inactive_icon()
 
         if kind == "vocab_size":
             self.vocab.setStyleSheet(self.fieldErrorStyle)
-
-    def mark_field_unknown(self, field):
-        field.setStyleSheet(self.fieldErrorStyle)
-        field.setText("???")
 
     def set_fields(self, mi: ModelMetaInfo):
         try:

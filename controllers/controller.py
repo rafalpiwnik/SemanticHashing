@@ -38,6 +38,22 @@ def fetch_models_to_widgets() -> list[ModelWidget]:
     return result
 
 
+def check_dataset_available(name: str):
+    """Checks if dataset exits"""
+    data_home = load_config()["model"]["data_home"]
+    dest = f"{data_home}/{name}"
+
+    return os.path.exists(dest)
+
+
+def check_model_exists(name: str):
+    """Checks if dataset exits"""
+    model_home = load_config()["model"]["model_home"]
+    dest = f"{model_home}/{name}"
+
+    return os.path.exists(dest)
+
+
 def rename_dataset(name_old: str, name_new: str):
     data_home = load_config()["model"]["data_home"]
     src_dirpath = f"{data_home}/{name_old}"
