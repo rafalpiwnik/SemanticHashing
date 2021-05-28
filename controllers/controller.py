@@ -43,7 +43,11 @@ def check_dataset_available(name: str):
     data_home = load_config()["model"]["data_home"]
     dest = f"{data_home}/{name}"
 
-    return os.path.exists(dest)
+    try:
+        return DatasetMetaInfo.from_file(dest)
+    except OSError:
+        return None
+
 
 
 def check_model_exists(name: str):

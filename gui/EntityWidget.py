@@ -15,6 +15,7 @@ class EntityWidget:
 
         self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
         self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
+        self.fieldMatchStyle = 'QLabel { color: green; font: bold "Segoe UI"; font-size: 14px }'
 
         self.fields: list[QLabel] = []
         self.labels = []

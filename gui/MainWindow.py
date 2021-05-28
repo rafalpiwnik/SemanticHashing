@@ -8,6 +8,7 @@ from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_wi
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
 from gui.ModelWidget import ModelWidget
+from gui.TrainWizard import TrainWizard
 from gui.designer.Ui_MainWindow import Ui_MainWindow
 
 
@@ -20,20 +21,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.datasetStacks = [self.trainDatasetStack]
         self.modelStacks = [self.trainModelStack]
 
-        # DATASET WIDGET TRAIN STACK
-        dw = DatasetWidget()
-        dw.make_prompt_preset()
-        dw.setContextMenuPolicy(Qt.PreventContextMenu)
-        self.trainDatasetStack.addWidget(dw)
-        self.trainDatasetStack.setCurrentWidget(dw)
+        # DATASET WIDGET STACKS SETUP
+        for stack in self.datasetStacks:
+            dw = DatasetWidget()
+            dw.make_prompt_preset()
+            stack.addWidget(dw)
+            stack.setCurrentWidget(dw)
 
-        mw = ModelWidget()
+        # MODEL WIDGET STACKS SETUP
+        for stack in self.modelStacks:
+            mw = ModelWidget()
+            mw.make_prompt_preset()
+            stack.addWidget(mw)
+            stack.setCurrentWidget(mw)
 
-        self.trainModelStack.addWidget(mw)
-        self.trainModelStack.setCurrentWidget(mw)
+        # STACK MIXING COMPATIBLE SIGNAL
+        for stack in self.datasetStacks + self.modelStacks:
+            stack.currentChanged.connect(self.check_mixing_compatible)
 
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
+
+        # TRAIN BUTTONS
+        self.buttonTrainWizard.clicked.connect(self.open_train_wizard)
 
         # DATASETS LIST
         self.datasetList.itemDoubleClicked.connect(self.update_current_dataset)
@@ -57,14 +67,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def verify_current_dataset(self):
         for stack in self.datasetStacks:
             current: DatasetWidget = stack.currentWidget()
-            exists = controller.check_dataset_available(current.name.text())
-            if not exists:
+            meta_info = controller.check_dataset_available(current.name.text())
+            if not meta_info:
                 dw = DatasetWidget()
                 dw.make_prompt_preset()
                 dw.setContextMenuPolicy(Qt.PreventContextMenu)
                 stack.addWidget(dw)
                 stack.setCurrentWidget(dw)
                 stack.removeWidget(current)
+            else:
+                current.set_fields(meta_info)
+                self.check_mixing_compatible()
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_model(self, item: QtWidgets.QListWidgetItem):
@@ -79,9 +92,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             stack.removeWidget(old_widget)
 
     def verify_current_model(self):
+        """Verifies if the current model in any of the stacks is still available locally"""
         for stack in self.modelStacks:
             current: ModelWidget = stack.currentWidget()
-            exists = controller.check_dataset_available(current.name.text())
+            exists = controller.check_model_available(current.name.text())
             if not exists:
                 mw = ModelWidget()
                 mw.make_prompt_preset()
@@ -90,10 +104,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 stack.setCurrentWidget(mw)
                 stack.removeWidget(current)
 
+    def check_mixing_compatible(self):
+        for ds, ms in zip(self.datasetStacks, self.modelStacks):
+            dataset: DatasetWidget = ds.currentWidget()
+            model: ModelWidget = ms.currentWidget()
+
+            model.reset_state()
+            dataset.reset_state()
+
+            if not dataset.vocabulary.text() == model.vocab.text():
+                dataset.mark_mismatch_error()
+                model.mark_mismatch_error()
+            elif dataset.name.text() == model.fit.text():
+                dataset.mark_native()
+                model.mark_native()
+
     @pyqtSlot()
     def open_dataset_wizard(self):
         dialog = DatasetWizard(parent=self)
         dialog.datasetsChanged.connect(self.update_datasets)
+        dialog.exec_()
+
+    @pyqtSlot()
+    def open_train_wizard(self):
+        dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(), parent=self)
+        print("Open")
         dialog.exec_()
 
     @pyqtSlot()

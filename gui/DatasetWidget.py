@@ -74,6 +74,8 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.hboxLayout.addWidget(self.iconLabel, 0)
         self.hboxLayout.addLayout(self.formLayout, 1)
 
+        self.hboxLayout.setAlignment(Qt.AlignVCenter)
+
         # MAIN LAYOUT
         self.setLayout(self.hboxLayout)
 
@@ -85,10 +87,10 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         copy = DatasetWidget()
         for src_field, dest_field in zip(self.fields, copy.fields):
             dest_field.setText(src_field.text())
+        copy.setContextMenuPolicy(Qt.PreventContextMenu)
         return copy
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
-        # Can open context menu only when main window is set
         menu = QMenu(self)
 
         openSrc = QAction("Open location", self)
@@ -130,6 +132,9 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         if kind == "vocab_size":
             self.vocabulary.setStyleSheet(self.fieldErrorStyle)
 
+    def mark_native(self):
+        self.name.setStyleSheet(self.fieldMatchStyle)
+
     def set_fields(self, mi: DatasetMetaInfo):
         try:
             self.name.setText(mi.info["name"])
@@ -169,40 +174,3 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
                 self.kind.setText(f"multi-labeled ({num_labels})")
         except KeyError:
             self.mark_field_unknown(self.kind)
-
-
-class exampleQMainWindow(QMainWindow):
-    def __init__(self):
-        super(exampleQMainWindow, self).__init__()
-        # Create QListWidget
-
-        self.datasetList = QListWidget(self)
-
-        self.scan_fill()
-
-        self.setCentralWidget(self.datasetList)
-
-        self.setMinimumSize(400, 1000)
-
-    def scan_fill(self):
-        dss = entity_discovery.scan_datasets()
-
-        self.datasetList.clear()
-
-        for ds in dss:
-            dataset_widget = DatasetWidget(self.datasetList)
-            dataset_widget.set_fields(ds)
-
-            item = QListWidgetItem(self.datasetList)
-            item.setSizeHint(dataset_widget.sizeHint())
-
-            self.datasetList.addItem(item)
-            self.datasetList.setItemWidget(item, dataset_widget)
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-    window = exampleQMainWindow()
-    window.show()
-
-    sys.exit(app.exec_())

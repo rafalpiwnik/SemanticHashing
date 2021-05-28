@@ -25,6 +25,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.formLayout.setContentsMargins(0, 0, 0, 0)
 
         self.hboxLayout = QtWidgets.QHBoxLayout()
+        self.vboxCentering = QtWidgets.QVBoxLayout()
 
         # ICON
 
@@ -78,6 +79,8 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.hboxLayout.addWidget(self.iconLabel, 0)
         self.hboxLayout.addLayout(self.formLayout, 1)
 
+        self.hboxLayout.setAlignment(Qt.AlignVCenter)
+
         # MAIN LAYOUT
         self.setLayout(self.hboxLayout)
 
@@ -89,10 +92,10 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         copy = ModelWidget()
         for src_field, dest_field in zip(self.fields, copy.fields):
             dest_field.setText(src_field.text())
+        copy.setContextMenuPolicy(Qt.PreventContextMenu)
         return copy
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
-        # Can open context menu only when main window is set
         menu = QMenu(self)
 
         openSrc = QAction("Open location", self)
@@ -134,6 +137,9 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         if kind == "vocab_size":
             self.vocab.setStyleSheet(self.fieldErrorStyle)
 
+    def mark_native(self):
+        self.fit.setStyleSheet(self.fieldMatchStyle)
+
     def set_fields(self, mi: ModelMetaInfo):
         try:
             self.name.setText(mi.info["name"])
@@ -173,49 +179,3 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
                 self.fit.setText("---")
         except KeyError:
             self.mark_field_unknown(self.fit)
-
-
-class exampleQMainWindow(QMainWindow):
-    def __init__(self):
-        super(exampleQMainWindow, self).__init__()
-        # Create QListWidget
-
-        self.datasetList = QListWidget(self)
-
-        model1 = ModelWidget(self.datasetList)
-
-        item = QListWidgetItem(self.datasetList)
-        item.setSizeHint(model1.sizeHint())
-
-        self.datasetList.addItem(item)
-        self.datasetList.setItemWidget(item, model1)
-
-        mi = ModelMetaInfo.from_file(load_config()["model"]["model_home"] + "/20ng_user")
-        model1.set_fields(mi)
-
-        self.setCentralWidget(self.datasetList)
-
-        self.setMinimumSize(300, 300)
-
-        """
-        d1 = DatasetWidget(self.datasetList)
-
-        item = QListWidgetItem(self.datasetList)
-        item.setSizeHint(d1.sizeHint())
-
-        self.datasetList.addItem(item)
-        self.datasetList.setItemWidget(item, d1)
-
-        self.setCentralWidget(self.datasetList)
-
-        mi = DatasetMetaInfo.from_file(load_config()["model"]["data_home"] + "/20ng_user")
-        d1.set_fields(mi)
-        """
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-    window = exampleQMainWindow()
-    window.show()
-
-    sys.exit(app.exec_())
