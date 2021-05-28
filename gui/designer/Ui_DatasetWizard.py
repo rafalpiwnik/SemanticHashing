@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DatasetWizardDialog(object):
     def setupUi(self, DatasetWizardDialog):
         DatasetWizardDialog.setObjectName("DatasetWizardDialog")
-        DatasetWizardDialog.resize(498, 272)
+        DatasetWizardDialog.resize(498, 318)
         DatasetWizardDialog.setSizeGripEnabled(False)
         self.gridLayout_2 = QtWidgets.QGridLayout(DatasetWizardDialog)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -73,6 +73,18 @@ class Ui_DatasetWizardDialog(object):
         self.gridLayout_2.addWidget(self.createDatasetButton, 2, 0, 1, 1)
         self.expandingGridLayout = QtWidgets.QGridLayout()
         self.expandingGridLayout.setObjectName("expandingGridLayout")
+        self.progressBar = QtWidgets.QProgressBar(DatasetWizardDialog)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.progressBar.setTextVisible(True)
+        self.progressBar.setOrientation(QtCore.Qt.Horizontal)
+        self.progressBar.setInvertedAppearance(False)
+        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
+        self.progressBar.setObjectName("progressBar")
+        self.expandingGridLayout.addWidget(self.progressBar, 0, 0, 1, 1)
+        self.createWorkerStatus = QtWidgets.QLabel(DatasetWizardDialog)
+        self.createWorkerStatus.setObjectName("createWorkerStatus")
+        self.expandingGridLayout.addWidget(self.createWorkerStatus, 1, 0, 1, 1)
         self.gridLayout_2.addLayout(self.expandingGridLayout, 3, 0, 1, 1)
 
         self.retranslateUi(DatasetWizardDialog)
@@ -92,3 +104,4 @@ class Ui_DatasetWizardDialog(object):
         self.directoryChoiceStatus.setText(_translate("DatasetWizardDialog", "No directory chosen"))
         self.label_3.setText(_translate("DatasetWizardDialog", "Output name"))
         self.createDatasetButton.setText(_translate("DatasetWizardDialog", "Create dataset"))
+        self.createWorkerStatus.setText(_translate("DatasetWizardDialog", "Waiting for start..."))
