@@ -39,6 +39,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for stack in self.datasetStacks + self.modelStacks:
             stack.currentChanged.connect(self.check_mixing_compatible)
 
+        # POPULATE WITH ENTITIES
+        self.update_datasets()
+        self.update_models()
+
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
 
@@ -146,8 +150,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.datasetList.addItem(item)
             self.datasetList.setItemWidget(item, w)
 
-    def set_models(self, widgets: list[ModelWidget]):
+    @pyqtSlot()
+    def update_models(self):
+        self.verify_current_model()
+
+        widgets = fetch_models_to_widgets()
+
+        self.modelList.clear()
+
         for w in widgets:
+            w.modelRemoved.connect(self.update_models)
             item = QtWidgets.QListWidgetItem()
             item.setSizeHint(w.sizeHint())
             self.modelList.addItem(item)
@@ -158,8 +170,5 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
-
-    window.update_datasets()
-    window.set_models(fetch_models_to_widgets())
 
     sys.exit(app.exec_())

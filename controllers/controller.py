@@ -10,7 +10,7 @@ from controllers.usersetup import load_config
 from gui.DatasetWidget import DatasetWidget
 from gui.ModelWidget import ModelWidget
 from storage import DocumentVectorizer, datasets
-from storage.MetaInfo import DatasetMetaInfo
+from storage.MetaInfo import DatasetMetaInfo, ModelMetaInfo
 from storage.entity_discovery import scan_models, scan_datasets
 
 
@@ -39,7 +39,7 @@ def fetch_models_to_widgets() -> list[ModelWidget]:
 
 
 def check_dataset_available(name: str):
-    """Checks if dataset exits"""
+    """Returns dataset meta info if it exists, else None"""
     data_home = load_config()["model"]["data_home"]
     dest = f"{data_home}/{name}"
 
@@ -49,13 +49,15 @@ def check_dataset_available(name: str):
         return None
 
 
-
-def check_model_exists(name: str):
-    """Checks if dataset exits"""
+def check_model_available(name: str):
+    """Returns model meta info if it exists, else None"""
     model_home = load_config()["model"]["model_home"]
     dest = f"{model_home}/{name}"
 
-    return os.path.exists(dest)
+    try:
+        return ModelMetaInfo.from_file(dest)
+    except OSError:
+        return None
 
 
 def rename_dataset(name_old: str, name_new: str):
@@ -69,6 +71,18 @@ def rename_dataset(name_old: str, name_new: str):
 def remove_dataset(name: str):
     data_home = load_config()["model"]["data_home"]
     dirpath = f"{data_home}/{name}"
+
+    try:
+        shutil.rmtree(dirpath)
+        return True
+    except OSError:
+        print("Could not delete")
+        return False
+
+
+def remove_model(name: str):
+    model_home = load_config()["model"]["model_home"]
+    dirpath = f"{model_home}/{name}"
 
     try:
         shutil.rmtree(dirpath)

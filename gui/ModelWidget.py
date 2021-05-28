@@ -101,7 +101,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         openSrc = QAction("Open location", self)
         remove = QAction("Remove", self)
 
-        remove.triggered.connect(self.make_remove_dataset)
+        remove.triggered.connect(self.make_remove_model)
 
         menu.addAction(openSrc)
         menu.addAction(remove)
@@ -110,7 +110,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
 
     @pyqtSlot()
     def make_remove_model(self):
-        success = controller.remove_dataset(self.name.text())
+        success = controller.remove_model(self.name.text())
         if success:
             self.modelRemoved.emit()
         else:
