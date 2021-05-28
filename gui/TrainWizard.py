@@ -15,3 +15,5 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
 
         self.datasetSpace.addWidget(self.datasetWidget)
         self.modelSpace.addWidget(self.modelWidget)
+
+

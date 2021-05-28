@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.keras.utils.vis_utils import plot_model
 
 import vdsh.utility
 from addressing import file_search
@@ -53,6 +54,8 @@ if __name__ == "__main__":
 
     vdsh.utility.train_model(model, 100, 15, "20ng_user")
     """
+
+    model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
 
     # model, vec = vdsh.utility.load_model("20ng_user")
     # predict = model.predict(np.zeros(shape=(1, 10000)))

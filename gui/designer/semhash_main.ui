@@ -326,6 +326,7 @@
      <string>Files</string>
     </property>
     <addaction name="actionSettings"/>
+    <addaction name="actionOpen_home"/>
    </widget>
    <addaction name="menuFiles"/>
   </widget>
@@ -341,6 +342,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew_dataset"/>
+   <addaction name="actionFetch_dataset"/>
    <addaction name="actionNew_model"/>
   </widget>
   <action name="actionSettings">
@@ -362,6 +364,19 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create a new VDSH model&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionFetch_dataset">
+   <property name="text">
+    <string>Fetch dataset</string>
+   </property>
+   <property name="toolTip">
+    <string>Fetch a vectorized dataset from an internet resource</string>
+   </property>
+  </action>
+  <action name="actionOpen_home">
+   <property name="text">
+    <string>Open home</string>
    </property>
   </action>
  </widget>

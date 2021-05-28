@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1102, 1056)
+        MainWindow.resize(1064, 1140)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.gridLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1102, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1064, 26))
         self.menubar.setObjectName("menubar")
         self.menuFiles = QtWidgets.QMenu(self.menubar)
         self.menuFiles.setObjectName("menuFiles")
@@ -167,9 +167,12 @@ class Ui_MainWindow(object):
         self.actionNew_dataset.setObjectName("actionNew_dataset")
         self.actionNew_model = QtWidgets.QAction(MainWindow)
         self.actionNew_model.setObjectName("actionNew_model")
+        self.actionFetch_dataset = QtWidgets.QAction(MainWindow)
+        self.actionFetch_dataset.setObjectName("actionFetch_dataset")
         self.menuFiles.addAction(self.actionSettings)
         self.menubar.addAction(self.menuFiles.menuAction())
         self.toolBar.addAction(self.actionNew_dataset)
+        self.toolBar.addAction(self.actionFetch_dataset)
         self.toolBar.addAction(self.actionNew_model)
 
         self.retranslateUi(MainWindow)
@@ -195,3 +198,5 @@ class Ui_MainWindow(object):
         self.actionNew_dataset.setToolTip(_translate("MainWindow", "<html><head/><body><p>Create a new dataset</p></body></html>"))
         self.actionNew_model.setText(_translate("MainWindow", "New model"))
         self.actionNew_model.setToolTip(_translate("MainWindow", "<html><head/><body><p>Create a new VDSH model</p></body></html>"))
+        self.actionFetch_dataset.setText(_translate("MainWindow", "Fetch dataset"))
+        self.actionFetch_dataset.setToolTip(_translate("MainWindow", "Fetch a vectorized dataset from an internet resource"))

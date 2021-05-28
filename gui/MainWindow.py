@@ -8,8 +8,10 @@ from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_wi
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
 from gui.ModelWidget import ModelWidget
+from gui.ModelWizard import ModelWizard
 from gui.TrainWizard import TrainWizard
 from gui.designer.Ui_MainWindow import Ui_MainWindow
+from storage.MetaInfo import are_compatible
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -45,6 +47,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
+        self.actionNew_model.triggered.connect(self.open_model_wizard)
 
         # TRAIN BUTTONS
         self.buttonTrainWizard.clicked.connect(self.open_train_wizard)
@@ -131,8 +134,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_train_wizard(self):
-        dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(), parent=self)
-        print("Open")
+        dw: DatasetWidget = self.trainDatasetStack.currentWidget()
+        dataset_name = dw.name.text()
+        mw: ModelWidget = self.trainModelStack.currentWidget()
+        model_name = mw.name.text()
+
+        mi_data = controller.check_dataset_available(dataset_name)
+        mi_model = controller.check_model_available(model_name)
+
+        # TODO: this or greyed out button
+        if mi_data and mi_model and are_compatible(mi_data, mi_model):
+            dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(),
+                                 parent=self)
+            dialog.exec_()
+        else:
+            error = QtWidgets.QErrorMessage(self)
+            error.exec_()
+
+    @pyqtSlot()
+    def open_model_wizard(self):
+        dialog = ModelWizard(self.datasetList)
         dialog.exec_()
 
     @pyqtSlot()
