@@ -5,7 +5,6 @@ import pickle
 import shutil
 
 import pandas as pd
-from typing import Union
 
 import h5py
 import numpy as np
@@ -13,34 +12,13 @@ import scipy.sparse.csr
 from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-import storage
 from controllers.usersetup import load_config
-from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo
 
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
 
-
+"""
 def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = ""):
-    """Creates a user dataset, fits a vectorizer and saves it
-
-    Parameters
-    ----------
-    root_dir : Union[str, os.PathLike]
-        Root dir of the text files to vectorize
-    vocab_size : int
-        Size of the vocabulary to consider
-    name :
-        Name of the dataset
-    file_ext :
-        Consider only files with a given extension
-
-    Returns
-    -------
-    None
-        Saves the dataset and the vectorizer to data_home
-
-    """
     data_home = load_config()["model"]["data_home"]
     dest = f"{data_home}/{name}"
 
@@ -72,6 +50,7 @@ def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name
                          source_dir=root_dir)
 
     mi.dump(dest)
+"""
 
 
 def extract_train(dataset_name: str):

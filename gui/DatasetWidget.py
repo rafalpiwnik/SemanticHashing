@@ -5,13 +5,18 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, QSizePolicy
 
+import controllers.controller
+from controllers import controller
 from storage import entity_discovery
 from storage.MetaInfo import DatasetMetaInfo
 
 
 class DatasetWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, mw=None):
         super(DatasetWidget, self).__init__(parent)
+
+        # main window
+        self.mw = mw
 
         self.hLayout = QtWidgets.QHBoxLayout()
 
@@ -90,17 +95,27 @@ class DatasetWidget(QtWidgets.QWidget):
         return copy
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
-        menu = QMenu(self)
+        # Can open context menu only when main window is set
+        if self.mw:
+            menu = QMenu(self)
 
-        rename = QAction("Rename", self)
-        openSrc = QAction("Open location", self)
-        remove = QAction("Remove", self)
+            openSrc = QAction("Open location", self)
+            remove = QAction("Remove", self)
 
-        menu.addAction(rename)
-        menu.addAction(openSrc)
-        menu.addAction(remove)
+            remove.triggered.connect(self.make_remove_dataset)
 
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+            menu.addAction(openSrc)
+            menu.addAction(remove)
+
+            action = menu.exec_(self.mapToGlobal(event.pos()))
+
+    def make_remove_dataset(self):
+        success = controller.remove_dataset(self.name.text())
+        if success:
+            self.mw.update_datasets()
+        else:
+            error_dialog = QtWidgets.QErrorMessage()
+            error_dialog.showMessage("Cannot remove dataset")
 
     def set_default_icon(self):
         self.iconLabel.setPixmap(QtGui.QPixmap("../resources/dataset.png"))
