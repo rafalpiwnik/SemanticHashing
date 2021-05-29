@@ -32,13 +32,20 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
         self.modelsChanged.emit()
         self.close()
 
+    @pyqtSlot(int)
+    def update_epoch_progbar(self, value: int):
+        self.epochProgbar.setValue(value)
+
+    @pyqtSlot(int)
+    def update_learning_progbar(self, value: int):
+        self.learningProgbar.setValue(value)
+
     @pyqtSlot()
     def startTraining(self):
         dataset_name = self.datasetWidget.name.text()
         model_name = self.modelWidget.name.text()
-        vocab_size = int(self.modelWidget.vocab.text().replace(",", ""))
-        hidden_dim = int(self.modelWidget.hiddenDim.text().replace(",", ""))
-        latent_dim = int(self.modelWidget.latentDim.text())
+
+        self.fitModelButton.setDisabled(True)
 
         epochs = self.trainEpochs.value()
         batch_size = self.trainBatch.value()
@@ -57,6 +64,12 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
                                        initial_rate,
                                        decaySteps,
                                        decayRate)
+
+        # Progressbar callback of the worker
+        callback_progbar = self.worker.get_progress_callback()
+        callback_progbar.learningProgress.connect(self.update_learning_progbar)
+        callback_progbar.epochProgress.connect(self.update_epoch_progbar)
+        callback_progbar.metrics.connect(self.update_status)
 
         self.worker.moveToThread(self.thread)
 

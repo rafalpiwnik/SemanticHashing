@@ -1,9 +1,10 @@
 import os
 import shutil
 
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 
 import vdsh.utility
+from controllers.GuiCallback import GuiCallback
 from controllers.usersetup import load_config
 from storage.datasets import extract_train
 import tensorflow as tf
@@ -11,6 +12,7 @@ import tensorflow as tf
 
 class TrainModelWorker(QObject):
     finished = pyqtSignal()
+    progress = pyqtSignal(int)
     status = pyqtSignal(str)
 
     def __init__(self, model_name: str, dataset_name: str, epochs: int, batch_size: int, optimizer: str,
@@ -28,6 +30,11 @@ class TrainModelWorker(QObject):
         self.decaySteps = decaySteps
         self.decayRate = decayRate
         self.initialRate = initialRate
+
+        self.progbar_callback = GuiCallback()
+
+    def get_progress_callback(self):
+        return self.progbar_callback
 
     def run(self):
         self.status.emit(f"Loading model '{self.model_name}'")
@@ -84,7 +91,7 @@ class TrainModelWorker(QObject):
 
         self.status.emit(f"Starting training...")
 
-        model.fit(X, epochs=self.epochs, batch_size=self.batch_size)
+        model.fit(X, epochs=self.epochs, batch_size=self.batch_size, callbacks=[self.progbar_callback])
 
         # Flag model fit
         model.meta.flag_fit(self.dataset_name)
@@ -94,3 +101,4 @@ class TrainModelWorker(QObject):
 
         self.status.emit("Model saved")
         self.finished.emit()
+
