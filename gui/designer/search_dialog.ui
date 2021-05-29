@@ -15,7 +15,28 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTreeWidget" name="files"/>
+    <widget class="QTreeWidget" name="files">
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Path</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Binary code</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Hamming distance</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QProgressBar" name="progbar">

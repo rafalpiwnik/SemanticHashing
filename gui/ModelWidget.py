@@ -98,12 +98,8 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         menu = QMenu(self)
 
-        openSrc = QAction("Open location", self)
         remove = QAction("Remove", self)
-
         remove.triggered.connect(self.make_remove_model)
-
-        menu.addAction(openSrc)
         menu.addAction(remove)
 
         action = menu.exec_(self.mapToGlobal(event.pos()))

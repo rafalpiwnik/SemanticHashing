@@ -34,4 +34,8 @@ class Ui_SearchDialog(object):
     def retranslateUi(self, SearchDialog):
         _translate = QtCore.QCoreApplication.translate
         SearchDialog.setWindowTitle(_translate("SearchDialog", "Dialog"))
+        self.files.headerItem().setText(0, _translate("SearchDialog", "Name"))
+        self.files.headerItem().setText(1, _translate("SearchDialog", "Path"))
+        self.files.headerItem().setText(2, _translate("SearchDialog", "Binary code"))
+        self.files.headerItem().setText(3, _translate("SearchDialog", "Hamming distance"))
         self.statusMessage.setText(_translate("SearchDialog", "Starting search..."))
