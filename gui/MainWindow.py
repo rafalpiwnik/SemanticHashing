@@ -12,6 +12,7 @@ from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
 from gui.ModelWidget import ModelWidget
 from gui.ModelWizard import ModelWizard
+from gui.SeachDialog import SearchDialog
 from gui.TrainWizard import TrainWizard
 from gui.designer.Ui_MainWindow import Ui_MainWindow
 from storage.MetaInfo import are_compatible
@@ -69,6 +70,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.chooseFileButton.clicked.connect(self.open_dialog_choose_search_file)
 
         self.searchModelStack.currentChanged.connect(self.check_search_available)
+        self.runSearchButton.clicked.connect(self.open_dialog_search)
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
@@ -235,6 +237,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.filename.setText(path)
         self.fileIcon.setPixmap(QPixmap("../resources/file.png"))
         self.check_search_available()
+
+    @pyqtSlot()
+    def open_dialog_search(self):
+        dialog = SearchDialog(parent=self)
+        dialog.exec_()
 
 
 if __name__ == "__main__":
