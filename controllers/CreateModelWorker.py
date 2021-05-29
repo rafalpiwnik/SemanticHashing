@@ -1,6 +1,9 @@
+import os
+
 from PyQt5.QtCore import QObject, pyqtSignal
 
 import vdsh.utility
+from controllers.usersetup import load_config
 
 
 class CreateModelWorker(QObject):
@@ -21,12 +24,8 @@ class CreateModelWorker(QObject):
     def run(self):
         self.status.emit(f"Creating VDSH '{self.name}'")
 
-        model = vdsh.utility.create_vdsh(self.vocab_dim, self.hidden_dim, self.latent_dim, self.kl_step,
-                                         self.dropout_prob, self.name)
-
-        self.status.emit("Saving model...")
-
-        vdsh.utility.dump_model(model)
+        mock_mi = vdsh.utility.create_mock_model(self.vocab_dim, self.hidden_dim, self.latent_dim, self.kl_step,
+                                                 self.dropout_prob, self.name)
 
         self.status.emit("Model saved")
         self.finished.emit()

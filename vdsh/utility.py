@@ -30,6 +30,28 @@ def create_vdsh(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: float
     return vdsh
 
 
+def create_mock_model(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: float, dropout_prob: float,
+                      name: str = "default"):
+    """Creates and saves a mock VDSH model by filling in the meta info only"""
+    mi = ModelMetaInfo(name=name,
+                       vocab_size=vocab_dim,
+                       hidden_dim=hidden_dim,
+                       latent_dim=latent_dim,
+                       kl_step=kl_step,
+                       dropout_prob=dropout_prob)
+
+    model_dest = f'{load_config()["model"]["model_home"]}/{name}'
+
+    try:
+        os.mkdir(model_dest)
+    except FileExistsError:
+        pass
+
+    mi.dump(model_dest)
+
+    return mi
+
+
 def train_model(model: VDSH, batch: int, num_epochs: int, dataset_name: str):
     """Fits model with train data of a given qualified dataset and saves it under its qualified name to models
     The model must be compiled
@@ -65,6 +87,9 @@ def train_model(model: VDSH, batch: int, num_epochs: int, dataset_name: str):
 
 def dump_model(model: VDSH):
     """Dumps the model to model_home/model.meta.name alongside with vectorizer if available at specified dataset name
+
+    Intended to use after fitting a model with a given dataset
+    Saved model cannot be refitted directly but has to be copied
 
     Parameters
     ----------
@@ -103,17 +128,17 @@ def dump_model(model: VDSH):
 
 
 def load_model(model_name: str) -> tuple[VDSH, DocumentVectorizer]:
-    """Loads the model if present from model_home/model_name and returns it
+    """Loads the model from model_home/model_name
+
+    If the model itself exists it is returned itself, compiled and ready to use
+
+    If the model doesn't exist but there is meta info file, then the model is created ad hoc
+    and returned as well
 
     Parameters
     ----------
     model_name : str
         A qualified model name
-
-    Raises
-    ------
-    OSError
-        When model with specified model_name does not exist
 
     Returns
     -------
@@ -123,9 +148,20 @@ def load_model(model_name: str) -> tuple[VDSH, DocumentVectorizer]:
     config = load_config()
     model_home = config["model"]["model_home"]
 
-    model = tf.keras.models.load_model(f"{model_home}/{model_name}")
-    # This is troublesome
     mi = ModelMetaInfo.from_file(f"{model_home}/{model_name}")
+
+    try:
+        model = tf.keras.models.load_model(f"{model_home}/{model_name}")
+    except OSError:
+        print("Model not found. Creating model...")
+        model = create_vdsh(mi.vocab_size,
+                            mi.hidden_dim,
+                            mi.latent_dim,
+                            mi.kl_step,
+                            mi.dropout_prob,
+                            mi.name)
+
+    # Push meta info to model
     model.meta = mi
 
     try:

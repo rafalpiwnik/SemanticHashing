@@ -147,23 +147,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_train_wizard(self):
-        dw: DatasetWidget = self.trainDatasetStack.currentWidget()
-        dataset_name = dw.name.text()
-        mw: ModelWidget = self.trainModelStack.currentWidget()
-        model_name = mw.name.text()
-
-        mi_data = controller.check_dataset_available(dataset_name)
-        mi_model = controller.check_model_available(model_name)
-
-        # TODO: this or greyed out button
-        if mi_data and mi_model and are_compatible(mi_data, mi_model):
-            dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(),
-                                 parent=self)
-            dialog.exec_()
-        else:
-            error = QtWidgets.QErrorMessage(self)
-            error.exec_()
-
+        dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(),
+                             parent=self)
+        dialog.exec_()
+        
     @pyqtSlot()
     def open_model_wizard(self):
         dialog = ModelWizard(self.datasetList)

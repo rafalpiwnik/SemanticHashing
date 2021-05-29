@@ -5,6 +5,7 @@ from tensorflow.python.keras.utils.vis_utils import plot_model
 import vdsh.utility
 from addressing import file_search
 from addressing.metrics import run_recall_test
+from controllers.TrainModelWorker import TrainModelWorker
 from controllers.controller import create_user_dataset
 from storage import DocumentVectorizer
 from storage.datasets import extract_train
@@ -55,7 +56,15 @@ if __name__ == "__main__":
     vdsh.utility.train_model(model, 100, 15, "20ng_user")
     """
 
-    model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
+    # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="main_created_model")
+    # model.compile(optimizer="adam")
+    # vdsh.utility.dump_model(model)
+
+    # model, vect = vdsh.utility.load_model("main_created_model")
+    # model.predict(np.zeros((3535, VOCAB_SIZE)))
+
+    tw = TrainModelWorker("mcok", "20ng_user", 3, 100, "adam", 0.0001, 100000, 0.96)
+    tw.run()
 
     # model, vec = vdsh.utility.load_model("20ng_user")
     # predict = model.predict(np.zeros(shape=(1, 10000)))

@@ -91,12 +91,32 @@ class ModelMetaInfo:
         return self.info["vocab_size"]
 
     @property
+    def hidden_dim(self):
+        return self.info["hidden_dim"]
+
+    @property
+    def latent_dim(self):
+        return self.info["latent_dim"]
+
+    @property
+    def kl_step(self):
+        return self.info["kl_step"]
+
+    @property
+    def dropout_prob(self):
+        return self.info["dropout_prob"]
+
+    @property
     def name(self):
         return self.info["name"]
 
     @property
     def dataset_name(self):
         return self.info["fit_dataset"]
+
+    @property
+    def is_fit(self):
+        return self.info["fit_dataset"] != ""
 
     def dump(self, dirpath: Union[str, os.PathLike]):
         date = datetime.datetime.now()
