@@ -287,6 +287,12 @@
               <layout class="QVBoxLayout" name="testDatasetSpace">
                <item>
                 <widget class="QStackedWidget" name="testDatasetStack">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16666666</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="currentIndex">
                   <number>-1</number>
                  </property>
@@ -350,13 +356,65 @@
           <property name="horizontalSpacing">
            <number>50</number>
           </property>
+          <item row="1" column="2">
+           <widget class="QGroupBox" name="searchDirGroupbox">
+            <property name="title">
+             <string>Search directory</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <layout class="QGridLayout" name="searchDirSpace">
+               <item row="2" column="0">
+                <widget class="QPushButton" name="chooseDirButton">
+                 <property name="text">
+                  <string>Choose directory</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="dirname">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="dirIcon">
+                 <property name="text">
+                  <string>folderIcon</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QGroupBox" name="searchModelGroupbox">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>350</width>
+              <height>16777215</height>
+             </size>
             </property>
             <property name="title">
              <string>Model</string>
@@ -388,7 +446,7 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="2">
+          <item row="1" column="4">
            <spacer name="horizontalSpacer_6">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -403,6 +461,72 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="1" column="3">
+           <widget class="QGroupBox" name="fileGroupbox">
+            <property name="title">
+             <string>Example file</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <layout class="QGridLayout" name="fileSpaceLayout">
+               <item row="2" column="0">
+                <widget class="QPushButton" name="chooseFileButton">
+                 <property name="text">
+                  <string>Choose file</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="filename">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="fileIcon">
+                 <property name="text">
+                  <string>fileIcon</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="searchButtonsGrid">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="runSearchButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Run search</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

@@ -1,7 +1,10 @@
+import os
 import sys
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import pyqtSlot, QEvent, Qt
+from PyQt5.QtCore import pyqtSlot, QEvent, Qt, QUrl
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QFileDialog
 
 from controllers import controller
 from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_widgets
@@ -57,6 +60,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # MODELS LIST
         self.modelList.itemDoubleClicked.connect(self.update_current_model)
+
+        # SEARCH TAB
+        self.dirIcon.setPixmap(QPixmap("../resources/dir-inactive.png"))
+        self.fileIcon.setPixmap(QPixmap("../resources/file-inactive.png"))
+
+        self.chooseDirButton.clicked.connect(self.open_dialog_choose_search_dir)
+        self.chooseFileButton.clicked.connect(self.open_dialog_choose_search_file)
+
+        self.searchModelStack.currentChanged.connect(self.check_search_available)
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
@@ -124,7 +136,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 model.reset_state()
                 dataset.reset_state()
 
-                if (not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
+                if (
+                        not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
                     dataset.mark_mismatch_error()
                     model.mark_mismatch_error()
                 elif dataset.name.text() == model.fit.text():
@@ -194,6 +207,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             item.setSizeHint(w.sizeHint())
             self.modelList.addItem(item)
             self.modelList.setItemWidget(item, w)
+
+    @pyqtSlot()
+    def check_search_available(self):
+        model_widget: ModelWidget = self.searchModelStack.currentWidget()
+        if not model_widget.is_prompt and self.dirname != "" and self.filename != "":
+            self.runSearchButton.setEnabled(True)
+        else:
+            self.runSearchButton.setEnabled(False)
+
+    @pyqtSlot()
+    def open_dialog_choose_search_dir(self):
+        home = os.path.expanduser("~")
+        fileDialog = QFileDialog(directory=home)
+        dirUrl: QUrl = fileDialog.getExistingDirectoryUrl()
+        dirpath = dirUrl.path()[1:]
+        self.dirname.setText(dirpath)
+        self.dirIcon.setPixmap(QPixmap("../resources/dir.png"))
+        self.check_search_available()
+
+    @pyqtSlot()
+    def open_dialog_choose_search_file(self):
+        home = os.path.expanduser("~")
+        fileDialog = QFileDialog(directory=home)
+        fileUrl: QUrl = fileDialog.getOpenFileUrl()[0]
+        path = fileUrl.path()[1:]
+        self.filename.setText(path)
+        self.fileIcon.setPixmap(QPixmap("../resources/file.png"))
+        self.check_search_available()
 
 
 if __name__ == "__main__":

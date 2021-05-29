@@ -113,6 +113,8 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
         sparse_train_tfidf: scipy.sparse.csr.csr_matrix = v.fit_transform(train.data)
         sparse_test_tfidf = v.transform(test.data)
 
+        # TODO Add more samples to train subset
+
         print("Saving dataset...")
         with h5py.File(f"{dest}/data.hdf5", "w") as hf:
             hf.create_dataset(name="train", data=sparse_train_tfidf.toarray(), compression="gzip")
@@ -120,7 +122,7 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
             hf.create_dataset(name="test", data=sparse_test_tfidf.toarray(), compression="gzip")
             hf.create_dataset(name="test_labels", data=test.target)
 
-        mi = DatasetMetaInfo("20ng",
+        mi = DatasetMetaInfo(name,
                              vocab_size,
                              num_train=sparse_train_tfidf.shape[0],
                              num_test=sparse_test_tfidf.shape[0],
