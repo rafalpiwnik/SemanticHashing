@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Model Wizard</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -33,6 +33,9 @@
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Output model name</string>
+       </property>
+       <property name="buddy">
+        <cstring>outputModelName</cstring>
        </property>
       </widget>
      </item>
@@ -65,6 +68,9 @@
             <property name="text">
              <string>Vocabulary size</string>
             </property>
+            <property name="buddy">
+             <cstring>vocabSize</cstring>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -90,6 +96,9 @@
            <widget class="QLabel" name="label_7">
             <property name="text">
              <string>Hidden dimension</string>
+            </property>
+            <property name="buddy">
+             <cstring>hiddenDim</cstring>
             </property>
            </widget>
           </item>
@@ -117,6 +126,9 @@
             <property name="text">
              <string>Latent dimension</string>
             </property>
+            <property name="buddy">
+             <cstring>latentDim</cstring>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
@@ -142,6 +154,9 @@
            <widget class="QLabel" name="label_9">
             <property name="text">
              <string>KL divergence weight step</string>
+            </property>
+            <property name="buddy">
+             <cstring>klStep</cstring>
             </property>
            </widget>
           </item>
@@ -174,6 +189,9 @@
            <widget class="QLabel" name="label_11">
             <property name="text">
              <string>Dropout probility</string>
+            </property>
+            <property name="buddy">
+             <cstring>dropout</cstring>
             </property>
            </widget>
           </item>

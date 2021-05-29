@@ -20,8 +20,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         # DATASET STACKS
-        self.datasetStacks = [self.trainDatasetStack]
-        self.modelStacks = [self.trainModelStack]
+        self.datasetStacks = [self.trainDatasetStack, self.testDatasetStack]
+        self.modelStacks = [self.trainModelStack, self.testModelStack]
 
         # DATASET WIDGET STACKS SETUP
         for stack in self.datasetStacks:
@@ -62,10 +62,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
         """Changes currently displayed item after double click on it"""
         list_widget: DatasetWidget = self.datasetList.itemWidget(item)
-        cloned_widget = list_widget.clone()
-        cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
-
         for stack in self.datasetStacks:
+            cloned_widget = list_widget.clone()
+            cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
+
             old_widget = stack.currentWidget()
             stack.addWidget(cloned_widget)
             stack.setCurrentWidget(cloned_widget)
@@ -89,10 +89,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_model(self, item: QtWidgets.QListWidgetItem):
         list_widget: ModelWidget = self.modelList.itemWidget(item)
-        cloned_widget = list_widget.clone()
-        cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
-
         for stack in self.modelStacks:
+            cloned_widget = list_widget.clone()
+            cloned_widget.setContextMenuPolicy(Qt.PreventContextMenu)
+
             old_widget = stack.currentWidget()
             stack.addWidget(cloned_widget)
             stack.setCurrentWidget(cloned_widget)
@@ -119,28 +119,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dataset: DatasetWidget = ds.currentWidget()
             model: ModelWidget = ms.currentWidget()
 
-            model.reset_state()
-            dataset.reset_state()
+            if model and dataset:
 
-            if (not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
-                dataset.mark_mismatch_error()
-                model.mark_mismatch_error()
-            elif dataset.name.text() == model.fit.text():
-                dataset.mark_native()
-                model.mark_native()
+                model.reset_state()
+                dataset.reset_state()
 
-            if model.is_prompt:
-                model.set_inactive_icon()
-                self.buttonTrainWizard.setEnabled(False)
-            if dataset.is_prompt:
-                dataset.set_inactive_icon()
-                self.buttonTrainWizard.setEnabled(False)
+                if (not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
+                    dataset.mark_mismatch_error()
+                    model.mark_mismatch_error()
+                elif dataset.name.text() == model.fit.text():
+                    dataset.mark_native()
+                    model.mark_native()
 
-            if not model.is_prompt and not dataset.is_prompt:
-                if dataset.vocabulary.text() == model.vocab.text():
-                    self.buttonTrainWizard.setEnabled(True)
-                else:
+                if model.is_prompt:
+                    model.set_inactive_icon()
                     self.buttonTrainWizard.setEnabled(False)
+                if dataset.is_prompt:
+                    dataset.set_inactive_icon()
+                    self.buttonTrainWizard.setEnabled(False)
+
+                if not model.is_prompt and not dataset.is_prompt:
+                    if dataset.vocabulary.text() == model.vocab.text():
+                        self.buttonTrainWizard.setEnabled(True)
+                        pass
+                    else:
+                        self.buttonTrainWizard.setEnabled(False)
+                        pass
 
     @pyqtSlot()
     def open_dataset_wizard(self):

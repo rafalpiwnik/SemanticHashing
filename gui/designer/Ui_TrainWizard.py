@@ -156,7 +156,7 @@ class Ui_TrainWizard(object):
 
     def retranslateUi(self, TrainWizard):
         _translate = QtCore.QCoreApplication.translate
-        TrainWizard.setWindowTitle(_translate("TrainWizard", "Dialog"))
+        TrainWizard.setWindowTitle(_translate("TrainWizard", "Training panel"))
         self.modelGroupbox.setTitle(_translate("TrainWizard", "Model"))
         self.groupBoxTrainParams.setTitle(_translate("TrainWizard", "Parameters"))
         self.trainEpochsLabel.setText(_translate("TrainWizard", "Epochs"))

@@ -23,6 +23,11 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
         # Connections
         self.fitModelButton.clicked.connect(self.startTraining)
 
+    def make_input_disabled(self):
+        elements = [self.optimizer, self.trainEpochs, self.trainBatch, self.initialRate, self.decaySteps, self.decayRate]
+        for e in elements:
+            e.setDisabled(True)
+
     @pyqtSlot(str)
     def update_status(self, text: str):
         self.statusMessage.setText(text)
@@ -46,6 +51,7 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
         model_name = self.modelWidget.name.text()
 
         self.fitModelButton.setDisabled(True)
+        self.make_input_disabled()
 
         epochs = self.trainEpochs.value()
         batch_size = self.trainBatch.value()

@@ -126,13 +126,19 @@ class Ui_ModelWizard(object):
         self.statusMessage = QtWidgets.QLabel(ModelWizard)
         self.statusMessage.setObjectName("statusMessage")
         self.gridLayout.addWidget(self.statusMessage, 6, 0, 1, 1)
+        self.label.setBuddy(self.outputModelName)
+        self.label_6.setBuddy(self.vocabSize)
+        self.label_7.setBuddy(self.hiddenDim)
+        self.label_8.setBuddy(self.latentDim)
+        self.label_9.setBuddy(self.klStep)
+        self.label_11.setBuddy(self.dropout)
 
         self.retranslateUi(ModelWizard)
         QtCore.QMetaObject.connectSlotsByName(ModelWizard)
 
     def retranslateUi(self, ModelWizard):
         _translate = QtCore.QCoreApplication.translate
-        ModelWizard.setWindowTitle(_translate("ModelWizard", "Dialog"))
+        ModelWizard.setWindowTitle(_translate("ModelWizard", "Model Wizard"))
         self.label.setText(_translate("ModelWizard", "Output model name"))
         self.groupBoxTrainParams.setTitle(_translate("ModelWizard", "Parameters"))
         self.label_6.setText(_translate("ModelWizard", "Vocabulary size"))
