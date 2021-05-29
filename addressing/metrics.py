@@ -8,14 +8,6 @@ from addressing.MedianHash import medhash_transform, MedianHash
 
 def run_recall_test(train_pred: np.ndarray, train_targets: np.ndarray,
                     test_pred: np.ndarray, test_targets: np.ndarray, k: int = 100):
-    """
-    TODO asserts
-    if test_pred.ndim != 2:
-        raise ValueError(f"Prediction has shape {test_pred.shape}, should be dim 2")
-    if train.ndim != 2:
-        raise ValueError(f"Train has shape {train.shape}, should be dim 2")
-    """
-
     assert train_targets.ndim == 1
     assert test_targets.ndim == 1
 

@@ -21,7 +21,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # DATASET STACKS
         self.datasetStacks = [self.trainDatasetStack, self.testDatasetStack]
-        self.modelStacks = [self.trainModelStack, self.testModelStack]
+        self.modelStacks = [self.trainModelStack, self.testModelStack, self.searchModelStack]
 
         # DATASET WIDGET STACKS SETUP
         for stack in self.datasetStacks:
