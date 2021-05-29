@@ -36,10 +36,10 @@ class GuiCallback(QObject, Callback):
         self.metrics.emit(self.metrics_message(logs))
 
     def on_train_begin(self, logs=None):
-        pass
+        self.metrics.emit("Starting training...")
 
     def on_train_end(self, logs=None):
-        pass
+        self.metrics.emit("Training finished")
 
     def metrics_message(self, logs=None):
         if logs:

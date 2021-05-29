@@ -66,7 +66,7 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
                                        decayRate)
 
         # Progressbar callback of the worker
-        callback_progbar = self.worker.get_progress_callback()
+        callback_progbar = self.worker.progressbar_callback
         callback_progbar.learningProgress.connect(self.update_learning_progbar)
         callback_progbar.epochProgress.connect(self.update_epoch_progbar)
         callback_progbar.metrics.connect(self.update_status)

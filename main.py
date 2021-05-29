@@ -63,9 +63,6 @@ if __name__ == "__main__":
     # model, vect = vdsh.utility.load_model("main_created_model")
     # model.predict(np.zeros((3535, VOCAB_SIZE)))
 
-    tw = TrainModelWorker("mini_newsgroups", "20ng_user", 3, 100, "adam", 0.0001, 100000, 0.96)
-    tw.run()
-
     # model, vec = vdsh.utility.load_model("20ng_user")
     # predict = model.predict(np.zeros(shape=(1, 10000)))
     # print(predict)

@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QObject
 
 import vdsh.utility
 from controllers.GuiCallback import GuiCallback
@@ -33,7 +33,8 @@ class TrainModelWorker(QObject):
 
         self.progbar_callback = GuiCallback()
 
-    def get_progress_callback(self):
+    @property
+    def progressbar_callback(self):
         return self.progbar_callback
 
     def run(self):
@@ -59,17 +60,6 @@ class TrainModelWorker(QObject):
             model, vectorizer = vdsh.utility.load_model(self.model_name)
 
         self.status.emit(f"Model loaded. Extracting train from '{self.dataset_name}' dataset")
-
-        # Create callbacks for monitoring metrics
-        """
-        checkpoint_filepath = load_config()["model"]["model_home"] + "/checkpoint"
-        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-            filepath=checkpoint_filepath,
-            save_weights_only=True,
-            monitor="loss",
-            mode="max",
-            save_best_only=True)
-        """
 
         # Extract train dataset
         X = extract_train(self.dataset_name)

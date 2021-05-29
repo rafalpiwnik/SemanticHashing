@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>811</width>
-    <height>384</height>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -244,7 +244,24 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="3">
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QFormLayout" name="formLayout_4">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Epoch</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QProgressBar" name="learningProgbar">
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_6">
        <property name="font">
@@ -258,7 +275,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="1" column="1">
       <widget class="QProgressBar" name="epochProgbar">
        <property name="value">
         <number>0</number>
@@ -268,27 +285,10 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="3">
+     <item row="2" column="0" colspan="2">
       <widget class="QLabel" name="statusMessage">
        <property name="text">
         <string>Waiting for start...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>Epoch</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2">
-      <widget class="QProgressBar" name="learningProgbar">
-       <property name="value">
-        <number>0</number>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
