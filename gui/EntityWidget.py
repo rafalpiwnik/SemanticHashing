@@ -20,6 +20,8 @@ class EntityWidget:
         self.fields: list[QLabel] = []
         self.labels = []
 
+        self.is_prompt = False
+
     @abc.abstractmethod
     def set_fields(self, mi):
         pass
@@ -34,10 +36,6 @@ class EntityWidget:
 
     @abc.abstractmethod
     def set_bad_icon(self):
-        pass
-
-    @abc.abstractmethod
-    def make_prompt_preset(self, opacity: float):
         pass
 
     @abc.abstractmethod
@@ -61,6 +59,8 @@ class EntityWidget:
 
     # Intentional
     def make_prompt_preset(self, opacity=0.25):
+        self.is_prompt = True
+
         op = QGraphicsOpacityEffect(self)
         op.setOpacity(opacity)
         self.setGraphicsEffect(op)

@@ -119,12 +119,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             model.reset_state()
             dataset.reset_state()
 
-            if not dataset.vocabulary.text() == model.vocab.text():
+            if (not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
                 dataset.mark_mismatch_error()
                 model.mark_mismatch_error()
             elif dataset.name.text() == model.fit.text():
                 dataset.mark_native()
                 model.mark_native()
+
+            if model.is_prompt:
+                model.set_inactive_icon()
+                self.buttonTrainWizard.setEnabled(False)
+            if dataset.is_prompt:
+                dataset.set_inactive_icon()
+                self.buttonTrainWizard.setEnabled(False)
+
+            if not model.is_prompt and not dataset.is_prompt:
+                if dataset.vocabulary.text() == model.vocab.text():
+                    self.buttonTrainWizard.setEnabled(True)
+                else:
+                    self.buttonTrainWizard.setEnabled(False)
 
     @pyqtSlot()
     def open_dataset_wizard(self):
@@ -154,6 +167,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def open_model_wizard(self):
         dialog = ModelWizard(self.datasetList)
+        dialog.modelsChanged.connect(self.update_models)
         dialog.exec_()
 
     @pyqtSlot()

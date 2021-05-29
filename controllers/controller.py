@@ -6,10 +6,11 @@ import h5py
 from PyQt5 import QtWidgets
 
 import storage
+import vdsh.utility
 from controllers.usersetup import load_config
 from gui.DatasetWidget import DatasetWidget
 from gui.ModelWidget import ModelWidget
-from storage import DocumentVectorizer, datasets
+from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo, ModelMetaInfo
 from storage.entity_discovery import scan_models, scan_datasets
 
@@ -64,8 +65,6 @@ def rename_dataset(name_old: str, name_new: str):
     data_home = load_config()["model"]["data_home"]
     src_dirpath = f"{data_home}/{name_old}"
     dest_dirpath = f"{data_home}/{name_new}"
-    # TODO
-    # os.rename(src_dirpath, dest_dirpath)
 
 
 def remove_dataset(name: str):
@@ -90,6 +89,13 @@ def remove_model(name: str):
     except OSError:
         print("Could not delete")
         return False
+
+
+def create_model(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: float, dropout_prob: float,
+                 name: str = "default"):
+    """Creates a VDSH model and saves it to model_home"""
+    model = vdsh.utility.create_vdsh(vocab_dim, hidden_dim, latent_dim, kl_step, dropout_prob, name)
+    vdsh.utility.dump_model(model)
 
 
 def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = "",

@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import tensorflow as tf
 
 import storage
@@ -89,6 +90,10 @@ def dump_model(model: VDSH):
         os.mkdir(model_dest)
     except FileExistsError:
         pass
+
+    # Running predict to set up weights
+    vocab_size = mi.vocab_size
+    model.predict(np.zeros(shape=(1, vocab_size)))
 
     model.save(model_dest)
     mi.dump(model_dest)

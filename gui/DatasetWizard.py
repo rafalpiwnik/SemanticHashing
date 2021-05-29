@@ -17,11 +17,21 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
 
         # parent is the main window
 
+        self.createDatasetButton.setDisabled(True)
+        self.outputName.textChanged.connect(self.enableButtonOnNameFilled)
+
         # DIALOG DIR CHOICE
         self.chooseDirectoryButton.clicked.connect(self.open_dialog_choose_dir)
 
         # COMMIT
         self.createDatasetButton.clicked.connect(self.create_dataset)
+
+    @pyqtSlot(str)
+    def enableButtonOnNameFilled(self, text: str):
+        if self.outputName.text() == "":
+            self.createDatasetButton.setDisabled(True)
+        else:
+            self.createDatasetButton.setEnabled(True)
 
     @pyqtSlot()
     def open_dialog_choose_dir(self):
