@@ -102,14 +102,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         """Verifies if the current model in any of the stacks is still available locally"""
         for stack in self.modelStacks:
             current: ModelWidget = stack.currentWidget()
-            exists = controller.check_model_available(current.name.text())
-            if not exists:
+            model_mi = controller.check_model_available(current.name.text())
+            if not model_mi:
                 mw = ModelWidget()
                 mw.make_prompt_preset()
                 mw.setContextMenuPolicy(Qt.PreventContextMenu)
                 stack.addWidget(mw)
                 stack.setCurrentWidget(mw)
                 stack.removeWidget(current)
+            else:
+                current.set_fields(model_mi)
+                self.check_mixing_compatible()
 
     def check_mixing_compatible(self):
         for ds, ms in zip(self.datasetStacks, self.modelStacks):
@@ -149,8 +152,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def open_train_wizard(self):
         dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(),
                              parent=self)
+        dialog.modelsChanged.connect(self.update_models)
         dialog.exec_()
-        
+
     @pyqtSlot()
     def open_model_wizard(self):
         dialog = ModelWizard(self.datasetList)

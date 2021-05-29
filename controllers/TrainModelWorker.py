@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from PyQt5.QtCore import pyqtSignal, QObject
 
 import vdsh.utility
@@ -32,16 +35,34 @@ class TrainModelWorker(QObject):
         # Load model and vectorizer
         model, vectorizer = vdsh.utility.load_model(self.model_name)
 
+        if model.meta.is_fit:
+            model_home = load_config()["model"]["model_home"]
+            source = f"{model_home}/{self.model_name}"
+            dest = f"{model_home}/{self.model_name}__swap"
+            os.rename(source, dest)
+            os.mkdir(source)
+
+            model.meta.info["fit"] = False
+            model.meta.info["fit_dataset"] = ""
+            model.meta.info["fit_time"] = ""
+            model.meta.dump(source)
+
+            shutil.rmtree(dest)
+
+            model, vectorizer = vdsh.utility.load_model(self.model_name)
+
         self.status.emit(f"Model loaded. Extracting train from '{self.dataset_name}' dataset")
 
         # Create callbacks for monitoring metrics
+        """
         checkpoint_filepath = load_config()["model"]["model_home"] + "/checkpoint"
         model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_filepath,
-            save_weights_only=False,
-            monitor="val_loss",
+            save_weights_only=True,
+            monitor="loss",
             mode="max",
             save_best_only=True)
+        """
 
         # Extract train dataset
         X = extract_train(self.dataset_name)
@@ -63,7 +84,10 @@ class TrainModelWorker(QObject):
 
         self.status.emit(f"Starting training...")
 
-        model.fit(X, epochs=self.epochs, batch_size=self.batch_size, callbacks=[model_checkpoint_callback])
+        model.fit(X, epochs=self.epochs, batch_size=self.batch_size)
+
+        # Flag model fit
+        model.meta.flag_fit(self.dataset_name)
 
         # Fitted model is saved, and marked fit, it cannot be fit once more without copying
         vdsh.utility.dump_model(model)
