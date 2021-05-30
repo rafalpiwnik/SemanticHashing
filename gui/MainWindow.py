@@ -16,7 +16,6 @@ from gui.ModelWizard import ModelWizard
 from gui.SearchDialog import SearchDialog
 from gui.TrainWizard import TrainWizard
 from gui.designer.Ui_MainWindow import Ui_MainWindow
-from storage.MetaInfo import are_compatible
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -61,7 +60,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.actionNew_dataset.setIcon(QIcon("../resources/dataset-add.png"))
         self.actionNew_model.setIcon(QIcon("../resources/model-add.png"))
-
 
         # TRAIN BUTTONS
         self.buttonTrainWizard.clicked.connect(self.open_train_wizard)

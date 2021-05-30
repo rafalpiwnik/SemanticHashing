@@ -44,7 +44,6 @@ def create_decoder(vocab_size: int, latent_dim: int):
     """Creates a VDSH decoder: latent_dim -> vocab_dim"""
     latent_inputs = tf.keras.Input(shape=(latent_dim,))
 
-    # Pytorch like
     prob_w = layers.Dense(vocab_size, activation="softmax")(latent_inputs)
     logprob_w = tf.math.log(prob_w)
 
@@ -56,6 +55,7 @@ def create_decoder(vocab_size: int, latent_dim: int):
 
 class VDSH(Model, ABC):
     def __init__(self, encoder, decoder, kl_step=KL_STEP, **kwargs):
+        """Create a VDSH model by supplying encoder and decoder models"""
         super(VDSH, self).__init__(**kwargs)
 
         self.encoder = encoder
@@ -80,21 +80,11 @@ class VDSH(Model, ABC):
 
     @staticmethod
     def reconstruct_loss(logprob_words, inputs, torch=False):
-        if torch:
-            return -tf.reduce_mean(tf.reduce_sum(logprob_words * inputs, axis=1))
-        else:
-            zeros = tf.cast(tf.zeros_like(inputs), dtype=tf.bool)
-            ones = tf.cast(tf.ones_like(inputs), dtype=tf.bool)
-            loc = tf.where(inputs > 0, ones, zeros)
-
-            logprob_scores = tf.boolean_mask(logprob_words, loc)
-            inputs_scores = tf.boolean_mask(inputs, loc)
-
-            return -tf.reduce_sum(tf.math.log(tf.maximum(logprob_scores * inputs_scores, 1e-10)))
+        return -tf.reduce_mean(tf.reduce_sum(logprob_words * inputs, axis=1))
 
     @staticmethod
     def kl_loss(z_mean, z_log_var):
-        # pytorch like loss
+        """Kullback–Leibler divergence"""
         loss = -0.5 * (1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
         loss = tf.reduce_mean(tf.reduce_sum(loss, axis=1))
         return loss
@@ -104,7 +94,7 @@ class VDSH(Model, ABC):
             z_mean, z_log_var, z = self.encoder(data)
             logprob_w = self.decoder(z)
 
-            rl = self.reconstruct_loss(logprob_w, data, torch=True)  # Note word indices
+            rl = self.reconstruct_loss(logprob_w, data)
             kld = self.kl_loss(z_mean, z_log_var)
             loss = rl + self.kl_weight * kld
 
@@ -124,5 +114,6 @@ class VDSH(Model, ABC):
         }
 
     def call(self, inputs, training=None, mask=None):
+        """Creates a z_mean vector by encoding the input"""
         z_mean, z_log_var, z = self.encoder(inputs)
         return z_mean
