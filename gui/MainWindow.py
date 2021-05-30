@@ -226,7 +226,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dirpath = dirUrl.path()[1:]
         self.dirname.setText(dirpath)
         self.dirIcon.setPixmap(QPixmap("../resources/dir.png"))
-        self.check_search_available()
+        # self.check_search_available()
 
     @pyqtSlot()
     def open_dialog_choose_search_file(self):
@@ -236,11 +236,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path = fileUrl.path()[1:]
         self.filename.setText(path)
         self.fileIcon.setPixmap(QPixmap("../resources/file.png"))
-        self.check_search_available()
+        # self.check_search_available()
 
     @pyqtSlot()
     def open_dialog_search(self):
-        dialog = SearchDialog(parent=self)
+        search_dir = self.dirname.text()
+        model_name = self.searchModelStack.currentWidget().name.text()
+        example_file_path = self.filename.text()
+        num_results = self.resultsNum.value()
+
+        dialog = SearchDialog(model_name, search_dir, num_results, target_path=example_file_path, parent=self)
+
         dialog.exec_()
 
 
