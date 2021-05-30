@@ -66,7 +66,7 @@ class Ui_SearchDialog(object):
 
     def retranslateUi(self, SearchDialog):
         _translate = QtCore.QCoreApplication.translate
-        SearchDialog.setWindowTitle(_translate("SearchDialog", "Dialog"))
+        SearchDialog.setWindowTitle(_translate("SearchDialog", "VDSH file search"))
         self.statusMessage.setText(_translate("SearchDialog", "Starting search..."))
         self.finishButton.setText(_translate("SearchDialog", "Finish"))
         item = self.fileTable.horizontalHeaderItem(0)

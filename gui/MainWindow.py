@@ -24,6 +24,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent=parent)
         self.setupUi(self)
 
+        self.setWindowIcon(QIcon("../resources/icon-main.png"))
+
         # DATASET STACKS
         self.datasetStacks = [self.trainDatasetStack, self.testDatasetStack]
         self.modelStacks = [self.trainModelStack, self.testModelStack, self.searchModelStack]
