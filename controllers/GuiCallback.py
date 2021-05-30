@@ -41,7 +41,8 @@ class GuiCallback(QObject, Callback):
     def on_train_end(self, logs=None):
         self.metrics.emit("Training finished")
 
-    def metrics_message(self, logs=None):
+    @staticmethod
+    def metrics_message(logs=None):
         if logs:
             return f"Total loss: {logs['loss']:.2f}, reconstruction_loss: {logs['reconstruction_loss']:.2f}," \
                    f" effective kl_loss: {logs['kl_loss']:.2f}"

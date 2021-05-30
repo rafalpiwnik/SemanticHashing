@@ -31,7 +31,6 @@ class CreateDatasetWorker(QObject):
 
         self.progress.emit(10)
 
-
         try:
             os.mkdir(f"{dest}")
         except FileExistsError:

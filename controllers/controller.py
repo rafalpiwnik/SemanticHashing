@@ -61,12 +61,6 @@ def check_model_available(name: str):
         return None
 
 
-def rename_dataset(name_old: str, name_new: str):
-    data_home = load_config()["model"]["data_home"]
-    src_dirpath = f"{data_home}/{name_old}"
-    dest_dirpath = f"{data_home}/{name_new}"
-
-
 def remove_dataset(name: str):
     data_home = load_config()["model"]["data_home"]
     dirpath = f"{data_home}/{name}"
@@ -96,74 +90,3 @@ def create_model(vocab_dim: int, hidden_dim: int, latent_dim: int, kl_step: floa
     """Creates a VDSH model and saves it to model_home"""
     model = vdsh.utility.create_vdsh(vocab_dim, hidden_dim, latent_dim, kl_step, dropout_prob, name)
     vdsh.utility.dump_model(model)
-
-
-def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = "",
-                        progbar: QtWidgets.QProgressBar = None):
-    """Creates a user dataset, fits a vectorizer and saves it
-
-    Parameters
-    ----------
-    root_dir : Union[str, os.PathLike]
-        Root dir of the text files to vectorize
-    vocab_size : int
-        Size of the vocabulary to consider
-    name :
-        Name of the dataset
-    progbar
-    file_ext :
-        Consider only files with a given extension
-
-
-    Returns
-    -------
-    None
-        Saves the dataset and the vectorizer to data_home
-
-    """
-    if progbar:
-        progbar.setValue(7)
-
-    data_home = load_config()["model"]["data_home"]
-    dest = f"{data_home}/{name}"
-
-    try:
-        os.mkdir(f"{data_home}/{name}")
-    except FileExistsError:
-        pass
-
-    if progbar:
-        progbar.setValue(15)
-
-    print("Getting paths...")
-    paths = storage.get_paths(root_dir, filter_extension=file_ext)
-    print(f"Found {len(paths)} suitable files at {root_dir}")
-
-    if progbar:
-        progbar.setValue(35)
-
-    print("Vectorizing...")
-    v = DocumentVectorizer(vocab_size)
-    X, words = v.fit_transform(paths)
-
-    if progbar:
-        progbar.setValue(95)
-
-    print("Saving dataset...")
-    with h5py.File(f"{dest}/data.hdf5", "w") as hf:
-        hf.create_dataset(name="train", data=X.toarray(), compression="gzip")
-
-    storage.save_vectorizer(v, dirpath=f"{dest}")
-
-    mi = DatasetMetaInfo(name,
-                         vocab_size,
-                         num_train=X.shape[0],
-                         num_test=0,
-                         num_labels=0,
-                         user=True,
-                         source_dir=root_dir)
-
-    mi.dump(dest)
-
-    if progbar:
-        progbar.setValue(100)

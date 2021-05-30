@@ -29,6 +29,7 @@ def pangram_words():
 def pangram_no_stopwords():
     return ["quick", "brown", "fox", "jumps", "lazy", "dog"]
 
+
 def test_get_paths_no_root_dir(no_such_dir):
     actual = get_paths(f"resources/{no_such_dir}")
     assert actual == []

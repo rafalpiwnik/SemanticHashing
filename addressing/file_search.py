@@ -6,6 +6,7 @@ import storage
 import vdsh.utility
 
 
+# TODO Check for safe delete
 def search(model_name: str, search_root: Union[str, os.PathLike], example_file_path: Union[str, os.PathLike],
            file_extension: str = ""):
     """Conducts search with a given model on a specified search space with a file given as an example"""
@@ -26,7 +27,6 @@ def search(model_name: str, search_root: Union[str, os.PathLike], example_file_p
 
     retrieved_indices = addressing.top_k_indices(code_example, pool=codes_search_target, k=25)
 
-    # TODO complexity
     retrieved = [search_paths[i] for i in retrieved_indices]
 
     print(retrieved)

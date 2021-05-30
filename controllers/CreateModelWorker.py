@@ -24,7 +24,7 @@ class CreateModelWorker(QObject):
     def run(self):
         self.status.emit(f"Creating VDSH '{self.name}'")
 
-        mock_mi = vdsh.utility.create_mock_model(self.vocab_dim, self.hidden_dim, self.latent_dim, self.kl_step,
+        vdsh.utility.create_mock_model(self.vocab_dim, self.hidden_dim, self.latent_dim, self.kl_step,
                                                  self.dropout_prob, self.name)
 
         self.status.emit("Model saved")
