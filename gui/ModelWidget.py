@@ -125,6 +125,8 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
 
         if kind == "vocab_size":
             self.vocab.setStyleSheet(self.fieldErrorStyle)
+        elif kind == "vectorizer":
+            self.vectorizer.setStyleSheet(self.fieldErrorStyle)
 
     def mark_native(self):
         self.fit.setStyleSheet(self.fieldMatchStyle)

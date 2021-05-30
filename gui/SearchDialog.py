@@ -3,11 +3,17 @@ import os
 from typing import Union
 
 from PyQt5 import QtWidgets, Qt
-from PyQt5.QtCore import QThread, pyqtSlot
-from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView
+from PyQt5.QtCore import QThread, pyqtSlot, QUrl
+from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QListWidgetItem
 
 from controllers.SearchWorker import SearchWorker
 from gui.designer.Ui_SearchDialog import Ui_SearchDialog
+
+FILE_NAME_INDEX = 0
+FILE_LOCATION_INDEX = 1
+HAMMING_DIST_INDEX = 2
+HASHCODE_INDEX = 3
 
 
 class SearchDialog(QtWidgets.QDialog, Ui_SearchDialog):
@@ -19,6 +25,9 @@ class SearchDialog(QtWidgets.QDialog, Ui_SearchDialog):
 
         self.fileTable.setRowCount(num_results)
         self.current_row = 0
+
+        # Open on double click
+        self.fileTable.itemDoubleClicked.connect(self.launch_app)
 
         self.thread = QThread()
         self.worker = SearchWorker(model_name, search_root, num_results, target_path)
@@ -51,14 +60,6 @@ class SearchDialog(QtWidgets.QDialog, Ui_SearchDialog):
     def update_status(self, text: str):
         self.statusMessage.setText(text)
 
-    @pyqtSlot(str)
-    def add_file(self, path: str):
-        file_location = QTableWidgetItem(path)
-        file_name = QTableWidgetItem(path.split("\\")[-1])
-        self.fileTable.setItem(self.current_row, 0, file_name)
-        self.fileTable.setItem(self.current_row, 1, file_location)
-        self.current_row += 1
-
     @pyqtSlot(list, list, list)
     def add_files(self, paths: list, distances: list, codes: list):
         for path, distance, code in zip(paths, distances, codes):
@@ -67,12 +68,18 @@ class SearchDialog(QtWidgets.QDialog, Ui_SearchDialog):
             distance_item = QTableWidgetItem(str(distance))
             code_item = QTableWidgetItem(code)
 
-            self.fileTable.setItem(self.current_row, 0, file_name)
-            self.fileTable.setItem(self.current_row, 1, file_location)
-            self.fileTable.setItem(self.current_row, 2, distance_item)
-            self.fileTable.setItem(self.current_row, 3, code_item)
+            self.fileTable.setItem(self.current_row, FILE_NAME_INDEX, file_name)
+            self.fileTable.setItem(self.current_row, FILE_LOCATION_INDEX, file_location)
+            self.fileTable.setItem(self.current_row, HAMMING_DIST_INDEX, distance_item)
+            self.fileTable.setItem(self.current_row, HASHCODE_INDEX, code_item)
 
             self.current_row += 1
 
         self.fileTable.resizeColumnsToContents()
         self.finishButton.setEnabled(True)
+
+    @pyqtSlot(QTableWidgetItem)
+    def launch_app(self, item: QTableWidgetItem):
+        path_item = self.fileTable.item(item.row(), FILE_LOCATION_INDEX)
+        file_url = QUrl(path_item.text().replace("\\", "/"))
+        QDesktopServices.openUrl(file_url)

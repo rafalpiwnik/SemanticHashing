@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot, QThread, pyqtSignal
+from PyQt5.QtGui import QIcon
 
 import controllers.controller
 from controllers.CreateModelWorker import CreateModelWorker
@@ -13,6 +14,8 @@ class ModelWizard(QtWidgets.QDialog, Ui_ModelWizard):
     def __init__(self, datasets: QtWidgets.QListWidget, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
+
+        self.setWindowIcon(QIcon("../resources/model-add.png"))
 
         self.createModelButton.setDisabled(True)
 

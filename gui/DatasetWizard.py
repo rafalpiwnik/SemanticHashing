@@ -2,6 +2,7 @@ import os.path
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QUrl, QThread, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 
 from controllers.CreateDatasetWorker import CreateDatasetWorker
@@ -14,6 +15,8 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
     def __init__(self, parent=None):
         super(DatasetWizard, self).__init__(parent=parent)
         self.setupUi(self)
+
+        self.setWindowIcon(QIcon("../resources/dataset-add.png"))
 
         self.createDatasetButton.setDisabled(True)
         self.outputName.textChanged.connect(self.enableButtonOnNameFilled)

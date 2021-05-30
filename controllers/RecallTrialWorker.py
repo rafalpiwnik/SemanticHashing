@@ -16,11 +16,12 @@ class RecallTrialWorker(QObject):
     precisionResult = pyqtSignal(float)
     status = pyqtSignal(str)
 
-    def __init__(self, dataset_name: str, model_name: str):
+    def __init__(self, dataset_name: str, model_name: str, k: int = 100):
         super().__init__()
 
         self._dataset_name = dataset_name
         self._model_name = model_name
+        self._k = k
 
     def run(self):
         self.status.emit(f"Loading model '{self._model_name}'...")
@@ -59,8 +60,9 @@ class RecallTrialWorker(QObject):
                 self.status.emit(f"Running metrics tests...")
 
                 precision_scores = []
+
                 for idx, tc in enumerate(test_codes):
-                    r = precision(test_targets[idx], train_targets, top_k_indices(tc, train_codes, 100)[0], 100)
+                    r = precision(test_targets[idx], train_targets, top_k_indices(tc, train_codes, self._k)[0], self._k)
                     precision_scores.append(r)
 
                     current_progress += progress_per_step
@@ -78,7 +80,3 @@ class RecallTrialWorker(QObject):
             self.progress.emit(0)
             self.finished.emit()
             self.status.emit("Failed to read data")
-
-
-
-

@@ -21,18 +21,10 @@ class TrainModelWorker(QObject):
                  decayRate: float):
         """Create a VDSH train model worker
 
+        TODO
+
         Parameters
         ----------
-        model_name : str
-            Qualified model name
-        dataset_name : str
-            Qualified dataset name
-        epochs
-        batch_size
-        optimizer
-        initialRate
-        decaySteps
-        decayRate
         """
         super().__init__()
 

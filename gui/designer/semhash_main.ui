@@ -68,7 +68,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTrain">
        <property name="sizePolicy">
@@ -93,6 +93,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Select a model from those available below for training</string>
             </property>
             <property name="title">
              <string>Model</string>
@@ -134,6 +137,9 @@
             </property>
             <property name="contextMenuPolicy">
              <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>Select a dataset from those available below for training</string>
             </property>
             <property name="title">
              <string>Dataset</string>
@@ -184,6 +190,9 @@
          <layout class="QGridLayout" name="trainTabInterface">
           <item row="0" column="0">
            <widget class="QPushButton" name="buttonTrainWizard">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>100</width>
@@ -229,6 +238,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Select a model from those available below for testing</string>
+            </property>
             <property name="title">
              <string>Model</string>
             </property>
@@ -269,6 +281,9 @@
             </property>
             <property name="contextMenuPolicy">
              <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>Select a dataset from those available below for testing</string>
             </property>
             <property name="title">
              <string>Dataset</string>
@@ -325,6 +340,9 @@
          <layout class="QGridLayout" name="testButtonsGrid">
           <item row="0" column="0">
            <widget class="QPushButton" name="testButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -430,6 +448,9 @@
               <width>500</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Select a model from those available below for file search</string>
             </property>
             <property name="title">
              <string>Model</string>
@@ -577,7 +598,7 @@
           <item row="0" column="2">
            <widget class="QPushButton" name="runSearchButton">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="maximumSize">
              <size>

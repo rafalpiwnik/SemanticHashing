@@ -1,8 +1,8 @@
 import os
 import sys
 
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import pyqtSlot, QEvent, Qt, QUrl
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSlot, Qt, QUrl
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog
 
@@ -243,9 +243,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def check_search_available(self):
         model_widget: ModelWidget = self.searchModelStack.currentWidget()
-        if not model_widget.is_prompt and self.dirname.text() != "" and self.filename.text() != "":
-            self.runSearchButton.setEnabled(True)
+        model_widget.reset_state()
+        if not model_widget.is_prompt and model_widget.vectorizer.text() == "Present":
+            if self.dirname.text() != "" and self.filename.text() != "":
+                self.runSearchButton.setEnabled(True)
+            else:
+                self.runSearchButton.setEnabled(False)
         else:
+            model_widget.mark_mismatch_error(kind="vectorizer")
             self.runSearchButton.setEnabled(False)
 
     @pyqtSlot()

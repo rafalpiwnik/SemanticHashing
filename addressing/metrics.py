@@ -6,6 +6,7 @@ from tqdm import tqdm
 from addressing.MedianHash import medhash_transform, MedianHash
 
 
+# TODO Safe delete
 def run_recall_test(train_pred: np.ndarray, train_targets: np.ndarray,
                     test_pred: np.ndarray, test_targets: np.ndarray, k: int = 100):
     assert train_targets.ndim == 1
@@ -20,7 +21,6 @@ def run_recall_test(train_pred: np.ndarray, train_targets: np.ndarray,
         r = precision(test_targets[idx], train_targets, top_k_indices(tc, train_codes, k)[0], k)
         precision_scores.append(r)
 
-    # This recall is as expected
     print("Mean precision:")
     print(np.array(precision_scores).mean())
     print(precision_scores)
