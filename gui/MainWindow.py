@@ -10,6 +10,7 @@ from controllers import controller, usersetup
 from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_widgets
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
+from gui.DialogRecallTrial import DialogRecallTrial
 from gui.ModelWidget import ModelWidget
 from gui.ModelWizard import ModelWizard
 from gui.SearchDialog import SearchDialog
@@ -64,6 +65,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # MODELS LIST
         self.modelList.itemDoubleClicked.connect(self.update_current_model)
+
+        # TEST TAB
+        self.testButton.clicked.connect(self.open_dialog_test)
 
         # SEARCH TAB
         self.dirIcon.setPixmap(QPixmap("../resources/dir-inactive.png"))
@@ -279,6 +283,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def open_semhash_home(self):
         print(usersetup.get_semhash_home())
         os.system(f'explorer.exe {usersetup.get_semhash_home()}')
+
+    @pyqtSlot()
+    def open_dialog_test(self):
+        dataset_name = self.testDatasetStack.currentWidget().name.text()
+        model_name = self.testModelStack.currentWidget().name.text()
+        dialog = DialogRecallTrial(dataset_name, model_name, parent=self)
+        dialog.exec_()
 
 
 if __name__ == "__main__":

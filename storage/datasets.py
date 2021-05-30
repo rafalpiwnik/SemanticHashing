@@ -43,6 +43,14 @@ def extract_train(dataset_name: str) -> Optional[np.ndarray]:
         return None
 
 
+def extract_labeled(dataset_name: str):
+    """Returns entire labeled dataset with (train, train_labels, test, test_labels)
+
+    If the dataset queried is unlabeled or not reachable None is returned"""
+
+
+
+
 # TODO Not used for now
 def extract_dataset_vectorizer(dataset_name: str) -> Optional[DocumentVectorizer]:
     """Extracts DocumentVectorizer from a given dataset, None if vectorizer is unreachable in data_home/dataset_name
