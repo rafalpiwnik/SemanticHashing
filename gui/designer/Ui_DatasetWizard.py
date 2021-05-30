@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DatasetWizardDialog(object):
     def setupUi(self, DatasetWizardDialog):
         DatasetWizardDialog.setObjectName("DatasetWizardDialog")
-        DatasetWizardDialog.resize(498, 318)
+        DatasetWizardDialog.resize(498, 290)
         DatasetWizardDialog.setSizeGripEnabled(False)
         self.gridLayout_2 = QtWidgets.QGridLayout(DatasetWizardDialog)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -39,15 +39,6 @@ class Ui_DatasetWizardDialog(object):
         self.stopwordsChoice.setObjectName("stopwordsChoice")
         self.stopwordsChoice.addItem("")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.stopwordsChoice)
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        self.removeShortFlag = QtWidgets.QCheckBox(self.tfidfGroupbox)
-        self.removeShortFlag.setObjectName("removeShortFlag")
-        self.gridLayout.addWidget(self.removeShortFlag, 0, 0, 1, 1)
-        self.removeLongFlag = QtWidgets.QCheckBox(self.tfidfGroupbox)
-        self.removeLongFlag.setObjectName("removeLongFlag")
-        self.gridLayout.addWidget(self.removeLongFlag, 0, 1, 1, 1)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.SpanningRole, self.gridLayout)
         self.gridLayout_2.addWidget(self.tfidfGroupbox, 1, 0, 1, 1)
         self.dataGroupbox = QtWidgets.QGroupBox(DatasetWizardDialog)
         self.dataGroupbox.setMaximumSize(QtCore.QSize(16777215, 1666))
@@ -92,13 +83,11 @@ class Ui_DatasetWizardDialog(object):
 
     def retranslateUi(self, DatasetWizardDialog):
         _translate = QtCore.QCoreApplication.translate
-        DatasetWizardDialog.setWindowTitle(_translate("DatasetWizardDialog", "Dialog"))
+        DatasetWizardDialog.setWindowTitle(_translate("DatasetWizardDialog", "Create a new dataset"))
         self.tfidfGroupbox.setTitle(_translate("DatasetWizardDialog", "TF-IDF Parameters"))
         self.label.setText(_translate("DatasetWizardDialog", "Vocabulary size"))
         self.label_2.setText(_translate("DatasetWizardDialog", "Stopwords"))
         self.stopwordsChoice.setItemText(0, _translate("DatasetWizardDialog", "english"))
-        self.removeShortFlag.setText(_translate("DatasetWizardDialog", "Remove short documents"))
-        self.removeLongFlag.setText(_translate("DatasetWizardDialog", "Remove long documents"))
         self.dataGroupbox.setTitle(_translate("DatasetWizardDialog", "Data"))
         self.chooseDirectoryButton.setText(_translate("DatasetWizardDialog", "Choose directory"))
         self.directoryChoiceStatus.setText(_translate("DatasetWizardDialog", "No directory chosen"))

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1064</width>
+    <width>1192</width>
     <height>1140</height>
    </rect>
   </property>
@@ -373,10 +373,22 @@
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="dirname">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>20</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>20</height>
+                   <width>200</width>
+                   <height>1666666</height>
                   </size>
                  </property>
                  <property name="text">
@@ -384,6 +396,9 @@
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -412,7 +427,7 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>350</width>
+              <width>500</width>
               <height>16777215</height>
              </size>
             </property>
@@ -479,17 +494,29 @@
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="filename">
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>20</height>
+                   <width>200</width>
+                   <height>1666666</height>
                   </size>
                  </property>
                  <property name="text">
                   <string/>
                  </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -516,7 +543,7 @@
            <widget class="QSpinBox" name="resultsNum">
             <property name="maximumSize">
              <size>
-              <width>40</width>
+              <width>60</width>
               <height>16777215</height>
              </size>
             </property>
@@ -675,7 +702,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1064</width>
+     <width>1192</width>
      <height>26</height>
     </rect>
    </property>

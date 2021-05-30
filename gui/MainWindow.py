@@ -213,30 +213,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def check_search_available(self):
         model_widget: ModelWidget = self.searchModelStack.currentWidget()
-        if not model_widget.is_prompt and self.dirname != "" and self.filename != "":
+        if not model_widget.is_prompt and self.dirname.text() != "" and self.filename.text() != "":
             self.runSearchButton.setEnabled(True)
         else:
             self.runSearchButton.setEnabled(False)
 
     @pyqtSlot()
     def open_dialog_choose_search_dir(self):
-        home = os.path.expanduser("~")
+        home = os.path.expanduser("~") if self.dirname.text() == "" else self.dirname.text()
         fileDialog = QFileDialog(directory=home)
         dirUrl: QUrl = fileDialog.getExistingDirectoryUrl()
         dirpath = dirUrl.path()[1:]
         self.dirname.setText(dirpath)
-        self.dirIcon.setPixmap(QPixmap("../resources/dir.png"))
-        # self.check_search_available()
+        if dirpath == "":
+            self.dirIcon.setPixmap(QPixmap("../resources/dir-inactive.png"))
+        else:
+            self.dirIcon.setPixmap(QPixmap("../resources/dir.png"))
+        self.check_search_available()
 
     @pyqtSlot()
     def open_dialog_choose_search_file(self):
-        home = os.path.expanduser("~")
+        home = os.path.expanduser("~") if self.dirname.text() == "" else self.dirname.text()
         fileDialog = QFileDialog(directory=home)
         fileUrl: QUrl = fileDialog.getOpenFileUrl()[0]
         path = fileUrl.path()[1:]
         self.filename.setText(path)
-        self.fileIcon.setPixmap(QPixmap("../resources/file.png"))
-        # self.check_search_available()
+        if path == "":
+            self.fileIcon.setPixmap(QPixmap("../resources/file-inactive.png"))
+        else:
+            self.fileIcon.setPixmap(QPixmap("../resources/file.png"))
+        self.check_search_available()
 
     @pyqtSlot()
     def open_dialog_search(self):

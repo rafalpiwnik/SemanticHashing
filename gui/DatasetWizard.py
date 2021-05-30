@@ -63,6 +63,10 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
         name = self.outputName.text()
 
         self.createDatasetButton.setDisabled(True)
+        self.outputName.setDisabled(True)
+        self.vocabSize.setDisabled(True)
+        self.stopwordsChoice.setDisabled(True)
+        self.createDatasetButton.setDisabled(True)
 
         # controllers.controller.create_user_dataset(dirpath, int(self.vocabSize.text()), name, progbar=self.progbar)
         self.thread = QThread()
