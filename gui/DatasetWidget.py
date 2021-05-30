@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, \
     QGraphicsOpacityEffect
 
@@ -83,7 +83,6 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.reset_state()
 
     def clone(self):
-        # ICON left Unchanged
         copy = DatasetWidget()
         for src_field, dest_field in zip(self.fields, copy.fields):
             dest_field.setText(src_field.text())
@@ -94,6 +93,7 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         menu = QMenu(self)
 
         remove = QAction("Remove", self)
+        remove.setIcon(QIcon("../resources/icon-delete.png"))
         remove.triggered.connect(self.make_remove_dataset)
         menu.addAction(remove)
 

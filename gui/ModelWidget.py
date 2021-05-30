@@ -1,5 +1,6 @@
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QMenu, QAction
 
 from controllers import controller
@@ -90,6 +91,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         menu = QMenu(self)
 
         remove = QAction("Remove", self)
+        remove.setIcon(QIcon("../resources/icon-delete.png"))
         remove.triggered.connect(self.make_remove_model)
         menu.addAction(remove)
 

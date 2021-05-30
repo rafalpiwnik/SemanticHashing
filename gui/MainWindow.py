@@ -3,7 +3,7 @@ import sys
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import pyqtSlot, QEvent, Qt, QUrl
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QFileDialog
 
 from controllers import controller, usersetup
@@ -56,6 +56,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
         self.actionNew_model.triggered.connect(self.open_model_wizard)
+
+        self.actionNew_dataset.setIcon(QIcon("../resources/dataset-add.png"))
+        self.actionNew_model.setIcon(QIcon("../resources/model-add.png"))
+
 
         # TRAIN BUTTONS
         self.buttonTrainWizard.clicked.connect(self.open_train_wizard)
