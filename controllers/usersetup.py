@@ -23,6 +23,10 @@ DEFAULT_SETTINGS = {
 }
 
 
+def get_semhash_home():
+    return f"{HOME_PATH}\\{CONFIG_ROOT}"
+
+
 # TODO recursive calls it itself
 def load_config(home_path: Union[str, os.PathLike] = os.path.expanduser("~")):
     """Loads config.json at ~/.semhash, returns json read as dict

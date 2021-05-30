@@ -6,13 +6,13 @@ from PyQt5.QtCore import pyqtSlot, QEvent, Qt, QUrl
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog
 
-from controllers import controller
+from controllers import controller, usersetup
 from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_widgets
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
 from gui.ModelWidget import ModelWidget
 from gui.ModelWizard import ModelWizard
-from gui.SeachDialog import SearchDialog
+from gui.SearchDialog import SearchDialog
 from gui.TrainWizard import TrainWizard
 from gui.designer.Ui_MainWindow import Ui_MainWindow
 from storage.MetaInfo import are_compatible
@@ -48,6 +48,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # POPULATE WITH ENTITIES
         self.update_datasets()
         self.update_models()
+
+        # TOP MENU ACTIONS
+        self.actionOpen_home.triggered.connect(self.open_semhash_home)
 
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
@@ -254,6 +257,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog = SearchDialog(model_name, search_dir, num_results, target_path=example_file_path, parent=self)
 
         dialog.exec_()
+
+    @pyqtSlot()
+    def open_semhash_home(self):
+        print(usersetup.get_semhash_home())
+        os.system(f'explorer.exe {usersetup.get_semhash_home()}')
 
 
 if __name__ == "__main__":

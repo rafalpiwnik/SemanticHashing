@@ -710,7 +710,6 @@
     <property name="title">
      <string>Files</string>
     </property>
-    <addaction name="actionSettings"/>
     <addaction name="actionOpen_home"/>
    </widget>
    <addaction name="menuFiles"/>
@@ -742,6 +741,9 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create a new dataset&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionNew_model">
    <property name="text">
@@ -749,6 +751,9 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create a new VDSH model&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionFetch_dataset">
@@ -762,6 +767,12 @@
   <action name="actionOpen_home">
    <property name="text">
     <string>Open home</string>
+   </property>
+   <property name="toolTip">
+    <string>Open config directory</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>

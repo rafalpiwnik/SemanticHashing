@@ -1,5 +1,3 @@
-import datetime
-import json
 import os
 import pickle
 import shutil
@@ -16,41 +14,6 @@ from controllers.usersetup import load_config
 from storage.MetaInfo import DatasetMetaInfo
 
 AVAILABLE_DATASETS = ["20ng", "rcv1"]
-
-"""
-def create_user_dataset(root_dir: Union[str, os.PathLike], vocab_size: int, name: str, file_ext: str = ""):
-    data_home = load_config()["model"]["data_home"]
-    dest = f"{data_home}/{name}"
-
-    try:
-        os.mkdir(f"{data_home}/{name}")
-    except FileExistsError:
-        pass
-
-    print("Getting paths...")
-    paths = storage.get_paths(root_dir, filter_extension=file_ext)
-    print(f"Found {len(paths)} suitable files at {root_dir}")
-
-    print("Vectorizing...")
-    v = DocumentVectorizer(vocab_size)
-    X, words = v.fit_transform(paths)
-
-    print("Saving dataset...")
-    with h5py.File(f"{dest}/data.hdf5", "w") as hf:
-        hf.create_dataset(name="train", data=X.toarray(), compression="gzip")
-
-    storage.save_vectorizer(v, dirpath=f"{dest}")
-
-    mi = DatasetMetaInfo(name,
-                         vocab_size,
-                         num_train=X.shape[0],
-                         num_test=0,
-                         num_labels=0,
-                         user=True,
-                         source_dir=root_dir)
-
-    mi.dump(dest)
-"""
 
 
 def extract_train(dataset_name: str):
@@ -113,8 +76,6 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
         sparse_train_tfidf: scipy.sparse.csr.csr_matrix = v.fit_transform(train.data)
         sparse_test_tfidf = v.transform(test.data)
 
-        # TODO Add more samples to train subset
-
         print("Saving dataset...")
         with h5py.File(f"{dest}/data.hdf5", "w") as hf:
             hf.create_dataset(name="train", data=sparse_train_tfidf.toarray(), compression="gzip")
@@ -134,9 +95,9 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
         print("Couldn't read config.json file")
 
 
+# TODO Complete this or delete
 def create_rcv1(vocab_size: int, num_train: int = 100000, num_test: int = 20000, num_labels: int = 40,
                 name: str = "rcv1", remove_short: bool = True, remove_long: bool = True):
-    """TODO multi label dataset fetching"""
     try:
         data_home = load_config()["model"]["data_home"]
         dest = f"{data_home}/{name}"

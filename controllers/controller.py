@@ -1,16 +1,9 @@
-import os
 import shutil
-from typing import Union
 
-import h5py
-from PyQt5 import QtWidgets
-
-import storage
 import vdsh.utility
 from controllers.usersetup import load_config
 from gui.DatasetWidget import DatasetWidget
 from gui.ModelWidget import ModelWidget
-from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo, ModelMetaInfo
 from storage.entity_discovery import scan_models, scan_datasets
 

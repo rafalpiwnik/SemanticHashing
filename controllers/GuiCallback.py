@@ -9,9 +9,8 @@ class GuiCallback(QObject, Callback):
     epochProgress = pyqtSignal(int)
     metrics = pyqtSignal(str)
 
-    def __init__(self, initial=0):
+    def __init__(self):
         super().__init__()
-        self.initial = initial
         self.epoch_step = 0
         self.epoch_num = 0
 
