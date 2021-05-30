@@ -1,6 +1,7 @@
 import os
 import pickle
 import shutil
+from typing import Optional
 
 import pandas as pd
 
@@ -11,24 +12,51 @@ from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from controllers.usersetup import load_config
+from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo
 
-AVAILABLE_DATASETS = ["20ng", "rcv1"]
+AVAILABLE_DATASETS = ["20ng"]
 
 
-def extract_train(dataset_name: str):
+def extract_train(dataset_name: str) -> Optional[np.ndarray]:
+    """Extracts train subset of a given dataset if available
+
+    Parameters
+    ----------
+    dataset_name : str
+        Qualified dataset name
+
+    Returns
+    -------
+    Optional[np.ndarray]
+        The train subset of the dataset, a numpy ndarray with tfidf vectors as rows
+
+    """
     data_home = load_config()["model"]["data_home"]
 
     try:
         with h5py.File(f"{data_home}/{dataset_name}/data.hdf5", "r") as hf:
             train: np.ndarray = hf["train"][:]
             return train
-    except IOError:
+    except (IOError, OSError):
         print(f"Cannot reach data.hdf5 in {dataset_name}")
         return None
 
 
-def extract_vectorizer(dataset_name: str):
+# TODO Not used for now
+def extract_dataset_vectorizer(dataset_name: str) -> Optional[DocumentVectorizer]:
+    """Extracts DocumentVectorizer from a given dataset, None if vectorizer is unreachable in data_home/dataset_name
+
+    Parameters
+    ----------
+    dataset_name : str
+        Qualified dataset name
+
+    Returns
+    -------
+    Optional[DocumentVectorizer]
+        DocumentVectorizer used to encode the dataset if available, None otherwise
+    """
     data_home = load_config()["model"]["data_home"]
 
     try:
@@ -40,7 +68,22 @@ def extract_vectorizer(dataset_name: str):
         return None
 
 
-def copy_vectorizer(dataset_name: str, dest_model_name: str):
+def copy_vectorizer(dataset_name: str, dest_model_name: str) -> bool:
+    """Copies the vectorizer from a given dataset to destination model
+
+    Parameters
+    ----------
+    dataset_name : str
+        Qualified dataset name
+    dest_model_name : str
+        Qualified model name
+
+    Returns
+    -------
+    bool
+        True if the copy succeeded, False if the dataset doesn't have a vectorizer or its vectorizer is unavailable
+
+    """
     config = load_config()
     data_home = config["model"]["data_home"]
     model_home = config["model"]["model_home"]
@@ -50,12 +93,28 @@ def copy_vectorizer(dataset_name: str, dest_model_name: str):
 
     try:
         shutil.copyfile(src, dest)
+        return True
     except FileNotFoundError:
         print(f"Dataset {dataset_name} has no defined vectorizer. It will not be usable for searching")
+        return False
 
 
 def create_20ng(vocab_size: int, name: str = "20ng"):
-    """Fetches and saves 20ng dataset with train/test split and targets to data_home/20ng"""
+    """Fetches 20ng dataset in plaintext thanks to sklearn, then uses custom Tfidf vectorizer
+    to encode the dataset according to specified vocab_size
+
+    Parameters
+    ----------
+    vocab_size : int
+        Target vocabulary size of the dataset
+    name : str
+        Output name of the dataset, default '20ng'
+
+    Returns
+    -------
+    None
+
+    """
     try:
         data_home = load_config()["model"]["data_home"]
         dest = f"{data_home}/{name}"
@@ -160,8 +219,6 @@ def create_rcv1(vocab_size: int, num_train: int = 100000, num_test: int = 20000,
 
         train = train_df.to_numpy()
         test = test_df.to_numpy()
-
-        # What is this returning
 
         mi = DatasetMetaInfo(name, vocab_size, num_train, num_test, num_labels)
         mi.dump(dest)

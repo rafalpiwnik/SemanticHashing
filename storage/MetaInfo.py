@@ -73,7 +73,6 @@ class ModelMetaInfo:
             "kl_step": kl_step,
             "dropout_prob": dropout_prob,
             "fit": fit,
-            "epochs": 0,
             "fit_dataset": fit_dataset,
             "fit_time": ""
         }
@@ -82,9 +81,6 @@ class ModelMetaInfo:
         self.info["fit"] = True
         self.info["fit_time"] = datetime.datetime.now().isoformat()
         self.info["fit_dataset"] = dataset_name
-
-    def set_epochs(self, num_epochs: int):
-        self.info["epochs"] = num_epochs
 
     @property
     def vocab_size(self):

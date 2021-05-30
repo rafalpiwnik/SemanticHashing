@@ -53,7 +53,7 @@
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>300</height>
+        <height>325</height>
        </size>
       </property>
       <property name="baseSize">
@@ -68,7 +68,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTrain">
        <property name="sizePolicy">
@@ -324,7 +324,7 @@
         <item>
          <layout class="QGridLayout" name="testButtonsGrid">
           <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="testButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -726,14 +726,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew_dataset"/>
-   <addaction name="actionFetch_dataset"/>
    <addaction name="actionNew_model"/>
   </widget>
-  <action name="actionSettings">
-   <property name="text">
-    <string>Settings</string>
-   </property>
-  </action>
   <action name="actionNew_dataset">
    <property name="text">
     <string>New dataset</string>

@@ -43,7 +43,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # STACK MIXING COMPATIBLE SIGNAL
         for stack in self.datasetStacks + self.modelStacks:
-            stack.currentChanged.connect(self.check_mixing_compatible)
+            stack.currentChanged.connect(self.check_compatible)
 
         # POPULATE WITH ENTITIES
         self.update_datasets()
@@ -101,7 +101,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 stack.removeWidget(current)
             else:
                 current.set_fields(meta_info)
-                self.check_mixing_compatible()
+                self.check_compatible()
+                self.check_test_compatible()
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def update_current_model(self, item: QtWidgets.QListWidgetItem):
@@ -129,9 +130,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 stack.removeWidget(current)
             else:
                 current.set_fields(model_mi)
-                self.check_mixing_compatible()
+                self.check_compatible()
 
-    def check_mixing_compatible(self):
+    def check_compatible(self):
         for ds, ms in zip(self.datasetStacks, self.modelStacks):
             dataset: DatasetWidget = ds.currentWidget()
             model: ModelWidget = ms.currentWidget()
@@ -141,8 +142,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 model.reset_state()
                 dataset.reset_state()
 
-                if (
-                        not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt and not model.is_prompt:
+                mismatch = (not dataset.vocabulary.text() == model.vocab.text()) and not dataset.is_prompt \
+                           and not model.is_prompt
+
+                if mismatch:
                     dataset.mark_mismatch_error()
                     model.mark_mismatch_error()
                 elif dataset.name.text() == model.fit.text():
@@ -152,17 +155,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if model.is_prompt:
                     model.set_inactive_icon()
                     self.buttonTrainWizard.setEnabled(False)
+                    self.testButton.setEnabled(False)
                 if dataset.is_prompt:
                     dataset.set_inactive_icon()
                     self.buttonTrainWizard.setEnabled(False)
+                    self.testButton.setEnabled(False)
 
                 if not model.is_prompt and not dataset.is_prompt:
                     if dataset.vocabulary.text() == model.vocab.text():
                         self.buttonTrainWizard.setEnabled(True)
-                        pass
+                        self.testButton.setEnabled(True)
                     else:
                         self.buttonTrainWizard.setEnabled(False)
-                        pass
+                        self.testButton.setEnabled(False)
+
+            self.check_test_compatible()
+
+    def check_test_compatible(self):
+        dataset: DatasetWidget = self.testDatasetStack.currentWidget()
+        model: ModelWidget = self.testModelStack.currentWidget()
+
+        if model and dataset:
+            if dataset.kind.text() == "unlabeled":
+                dataset.mark_mismatch_error(kind="label")
+                model.set_inactive_icon()
+                self.testButton.setEnabled(False)
 
     @pyqtSlot()
     def open_dataset_wizard(self):

@@ -127,6 +127,8 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
 
         if kind == "vocab_size":
             self.vocabulary.setStyleSheet(self.fieldErrorStyle)
+        elif kind == "label":
+            self.kind.setStyleSheet(self.fieldErrorStyle)
 
     def mark_native(self):
         self.name.setStyleSheet(self.fieldMatchStyle)

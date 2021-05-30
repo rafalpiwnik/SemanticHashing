@@ -1,14 +1,8 @@
-import sys
-from abc import ABC
-
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QGraphicsOpacityEffect, \
-    QMenu, QAction
+from PyQt5.QtWidgets import QLabel, QMenu, QAction
 
 from controllers import controller
-from controllers.usersetup import load_config
 from gui.EntityWidget import EntityWidget
 from storage.MetaInfo import ModelMetaInfo
 
@@ -28,11 +22,9 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.vboxCentering = QtWidgets.QVBoxLayout()
 
         # ICON
-
         self.iconLabel = QLabel("model-icon")
 
         # LABELS
-
         self.nameLabel = QLabel("Name")
         self.vocabLabel = QLabel("Vocabulary dim")
         self.hiddenDimLabel = QLabel("Hidden dim")
@@ -40,15 +32,15 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.klStepLabel = QLabel("KL step")
         self.dropoutLabel = QLabel("Dropout prob")
         self.fitLabel = QLabel("Fit dataset")
+        self.vectorizerLabel = QLabel("Vectorizer")
 
         self.labels = [self.nameLabel, self.vocabLabel, self.hiddenDimLabel, self.latentDimLabel,
-                       self.klStepLabel, self.dropoutLabel, self.fitLabel]
+                       self.klStepLabel, self.dropoutLabel, self.fitLabel, self.vectorizerLabel]
 
         for label in self.labels:
             label.setFont(self.label_font)
 
         # FIELDS
-
         self.name = QLabel("loading...")
         self.vocab = QLabel("loading...")
         self.hiddenDim = QLabel("loading...")
@@ -56,16 +48,16 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.klStep = QLabel("loading...")
         self.dropout = QLabel("loading...")
         self.fit = QLabel("loading...")
+        self.vectorizer = QLabel("loading...")
 
         # FIELDS AND STYLES
-
-        self.fields = [self.name, self.vocab, self.hiddenDim, self.latentDim, self.klStep, self.dropout, self.fit]
+        self.fields = [self.name, self.vocab, self.hiddenDim, self.latentDim, self.klStep, self.dropout, self.fit,
+                       self.vectorizer]
 
         for f in self.fields:
             f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         # ADDING ROWS
-
         self.formLayout.addRow(self.nameLabel, self.name)
         self.formLayout.addRow(self.vocabLabel, self.vocab)
         self.formLayout.addRow(self.hiddenDimLabel, self.hiddenDim)
@@ -73,9 +65,9 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.formLayout.addRow(self.klStepLabel, self.klStep)
         self.formLayout.addRow(self.dropoutLabel, self.dropout)
         self.formLayout.addRow(self.fitLabel, self.fit)
+        self.formLayout.addRow(self.vectorizerLabel, self.vectorizer)
 
         # WRAPPING HBOX
-
         self.hboxLayout.addWidget(self.iconLabel, 0)
         self.hboxLayout.addLayout(self.formLayout, 1)
 
@@ -88,7 +80,6 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.reset_state()
 
     def clone(self):
-        # ICON left Unchanged
         copy = ModelWidget()
         for src_field, dest_field in zip(self.fields, copy.fields):
             dest_field.setText(src_field.text())
@@ -102,7 +93,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         remove.triggered.connect(self.make_remove_model)
         menu.addAction(remove)
 
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec_(self.mapToGlobal(event.pos()))
 
     @pyqtSlot()
     def make_remove_model(self):
@@ -175,3 +166,12 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
                 self.fit.setText("---")
         except KeyError:
             self.mark_field_unknown(self.fit)
+
+        try:
+            has_vectorizer = controller.check_model_has_vectorizer(model_name=mi.name)
+            if has_vectorizer:
+                self.vectorizer.setText("Present")
+            else:
+                self.vectorizer.setText("Not defined")
+        except KeyError:
+            self.mark_field_unknown(self.dropout)

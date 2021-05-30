@@ -21,12 +21,6 @@ class GuiCallback(QObject, Callback):
         total_progress = min(math.floor(100 * (self.epoch_num / self.params["epochs"])), 100)
         self.learningProgress.emit(total_progress)
 
-    def on_epoch_end(self, epoch, logs=None):
-        pass
-
-    def on_batch_begin(self, batch, logs=None):
-        pass
-
     def on_batch_end(self, batch, logs=None):
         self.epoch_step += 1
         current_progress = min(math.floor(100 * (self.epoch_step / self.params["steps"])), 100)
@@ -38,7 +32,7 @@ class GuiCallback(QObject, Callback):
         self.metrics.emit("Starting training...")
 
     def on_train_end(self, logs=None):
-        self.metrics.emit("Training finished")
+        self.metrics.emit("Training finished. Saving weights...")
 
     @staticmethod
     def metrics_message(logs=None):

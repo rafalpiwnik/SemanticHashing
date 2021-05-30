@@ -15,8 +15,6 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
         super(DatasetWizard, self).__init__(parent=parent)
         self.setupUi(self)
 
-        # parent is the main window
-
         self.createDatasetButton.setDisabled(True)
         self.outputName.textChanged.connect(self.enableButtonOnNameFilled)
 
@@ -67,8 +65,8 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
         self.vocabSize.setDisabled(True)
         self.stopwordsChoice.setDisabled(True)
         self.createDatasetButton.setDisabled(True)
+        self.chooseDirectoryButton.setDisabled(True)
 
-        # controllers.controller.create_user_dataset(dirpath, int(self.vocabSize.text()), name, progbar=self.progbar)
         self.thread = QThread()
         self.worker = CreateDatasetWorker(dirpath, name, int(self.vocabSize.text()))
         self.worker.moveToThread(self.thread)

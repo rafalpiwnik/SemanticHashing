@@ -86,7 +86,7 @@ def train_model(model: VDSH, batch: int, num_epochs: int, dataset_name: str):
 
 
 def dump_model(model: VDSH):
-    """Dumps the model to model_home/model.meta.name alongside with vectorizer if available at specified dataset name
+    """Dumps the model and the vectorizer at data_home/fit_dataset to model_home/model.meta.name
 
     Intended to use after fitting a model with a given dataset
     Saved model cannot be refitted directly but has to be copied
@@ -105,7 +105,6 @@ def dump_model(model: VDSH):
 
     # Infer export model name and dataset name from meta info
     mi = model.meta
-
     model_name = mi.name
     dataset_name = mi.dataset_name
 

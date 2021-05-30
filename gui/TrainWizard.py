@@ -24,7 +24,8 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
         self.fitModelButton.clicked.connect(self.startTraining)
 
     def make_input_disabled(self):
-        elements = [self.optimizer, self.trainEpochs, self.trainBatch, self.initialRate, self.decaySteps, self.decayRate]
+        elements = [self.optimizer, self.trainEpochs, self.trainBatch, self.initialRate, self.decaySteps,
+                    self.decayRate]
         for e in elements:
             e.setDisabled(True)
 
@@ -87,4 +88,5 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
         self.worker.status.connect(self.update_status)
         self.worker.finished.connect(self.exit_on_worker_finished)
 
+        self.thread.daemon = True
         self.thread.start()

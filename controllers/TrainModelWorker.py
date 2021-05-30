@@ -11,6 +11,7 @@ import tensorflow as tf
 
 
 class TrainModelWorker(QObject):
+    """Worker used to train a VDSH model model"""
     finished = pyqtSignal()
     progress = pyqtSignal(int)
     status = pyqtSignal(str)
@@ -18,6 +19,21 @@ class TrainModelWorker(QObject):
     def __init__(self, model_name: str, dataset_name: str, epochs: int, batch_size: int, optimizer: str,
                  initialRate: float, decaySteps: int,
                  decayRate: float):
+        """Create a VDSH train model worker
+
+        Parameters
+        ----------
+        model_name : str
+            Qualified model name
+        dataset_name : str
+            Qualified dataset name
+        epochs
+        batch_size
+        optimizer
+        initialRate
+        decaySteps
+        decayRate
+        """
         super().__init__()
 
         self.model_name = model_name
@@ -27,9 +43,9 @@ class TrainModelWorker(QObject):
         self.epochs = epochs
         self.batch_size = batch_size
 
-        self.decaySteps = decaySteps
-        self.decayRate = decayRate
-        self.initialRate = initialRate
+        self.decay_steps = decaySteps
+        self.decay_rate = decayRate
+        self.initial_rate = initialRate
 
         self.progbar_callback = GuiCallback()
 
@@ -43,6 +59,7 @@ class TrainModelWorker(QObject):
         # Load model and vectorizer
         model, vectorizer = vdsh.utility.load_model(self.model_name)
 
+        # Reset the mode before refitting if it has already been fit
         if model.meta.is_fit:
             model_home = load_config()["model"]["model_home"]
             source = f"{model_home}/{self.model_name}"
@@ -67,9 +84,9 @@ class TrainModelWorker(QObject):
         self.status.emit("Compiling the model...")
 
         lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-            self.initialRate,
-            decay_steps=self.decaySteps,
-            decay_rate=self.decayRate,
+            self.initial_rate,
+            decay_steps=self.decay_steps,
+            decay_rate=self.decay_rate,
             staircase=True)
 
         if self.optimizer == "adam":
@@ -91,4 +108,3 @@ class TrainModelWorker(QObject):
 
         self.status.emit("Model saved")
         self.finished.emit()
-

@@ -1,4 +1,6 @@
+import os
 import shutil
+from typing import Union, Optional
 
 import vdsh.utility
 from controllers.usersetup import load_config
@@ -9,6 +11,7 @@ from storage.entity_discovery import scan_models, scan_datasets
 
 
 def fetch_datasets_to_widgets() -> list[DatasetWidget]:
+
     result = []
     mi_datasets = scan_datasets()
 
@@ -21,6 +24,7 @@ def fetch_datasets_to_widgets() -> list[DatasetWidget]:
 
 
 def fetch_models_to_widgets() -> list[ModelWidget]:
+    """Fetches models from model_home and returns them as ModelWidgets"""
     result = []
     mi_datasets = scan_models()
 
@@ -32,7 +36,7 @@ def fetch_models_to_widgets() -> list[ModelWidget]:
     return result
 
 
-def check_dataset_available(name: str):
+def check_dataset_available(name: str) -> Optional[DatasetMetaInfo]:
     """Returns dataset meta info if it exists, else None"""
     data_home = load_config()["model"]["data_home"]
     dest = f"{data_home}/{name}"
@@ -43,7 +47,7 @@ def check_dataset_available(name: str):
         return None
 
 
-def check_model_available(name: str):
+def check_model_available(name: str) -> Optional[ModelMetaInfo]:
     """Returns model meta info if it exists, else None"""
     model_home = load_config()["model"]["model_home"]
     dest = f"{model_home}/{name}"
@@ -54,22 +58,53 @@ def check_model_available(name: str):
         return None
 
 
-def remove_dataset(name: str):
+def check_model_has_vectorizer(model_name: str):
+    """Returns True if specified model has a vectorizer assigned, False otherwise"""
+    data_home = load_config()["model"]["model_home"]
+
+    return os.path.isfile(f"{data_home}/{model_name}/vectorizer.pkl")
+
+
+def remove_dataset(name: str) -> bool:
+    """Permanently removes the dataset from files at data_home
+
+    Parameters
+    ----------
+    name : str
+        Qualified dataset name
+
+    Returns
+    -------
+    bool
+        True if deletion succeeded, False otherwise
+
+    """
     data_home = load_config()["model"]["data_home"]
     dirpath = f"{data_home}/{name}"
-
-    try:
-        shutil.rmtree(dirpath)
-        return True
-    except OSError:
-        print("Could not delete")
-        return False
+    return _remove_entity(dirpath)
 
 
-def remove_model(name: str):
+def remove_model(name: str) -> bool:
+    """Permanently removes the model from files at model_home
+
+        Parameters
+        ----------
+        name : str
+            Qualified model name
+
+        Returns
+        -------
+        bool
+            True if deletion succeeded, False otherwise
+
+        """
     model_home = load_config()["model"]["model_home"]
     dirpath = f"{model_home}/{name}"
+    return _remove_entity(dirpath)
 
+
+def _remove_entity(dirpath: Union[str, os.PathLike]) -> bool:
+    """Permanently removes dir and all its contents at dirpath, returns True if action succeeded, False otherwise"""
     try:
         shutil.rmtree(dirpath)
         return True
