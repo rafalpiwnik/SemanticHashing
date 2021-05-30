@@ -3,10 +3,9 @@ import pickle
 import shutil
 from typing import Optional
 
-import pandas as pd
-
 import h5py
 import numpy as np
+import pandas as pd
 import scipy.sparse.csr
 from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -41,15 +40,6 @@ def extract_train(dataset_name: str) -> Optional[np.ndarray]:
     except (IOError, OSError):
         print(f"Cannot reach data.hdf5 in {dataset_name}")
         return None
-
-
-def extract_labeled(dataset_name: str):
-    """Returns entire labeled dataset with (train, train_labels, test, test_labels)
-
-    If the dataset queried is unlabeled or not reachable None is returned"""
-
-
-
 
 # TODO Not used for now
 def extract_dataset_vectorizer(dataset_name: str) -> Optional[DocumentVectorizer]:

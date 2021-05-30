@@ -2,7 +2,6 @@ import os
 import pickle
 from typing import Union
 
-import h5py
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tqdm import tqdm
 
@@ -41,47 +40,6 @@ class DocumentVectorizer:
         print(f"Running transform on {len(paths)} paths")
         X = self.model.transform(paths)
         return X
-
-    @staticmethod
-    def save_transform(X, words: list[str], path: Union[str, os.PathLike], dataset_name: str,
-                       x_name="X", words_name="vocab"):
-        """TODO check if used
-        Saves wcv matrix as .h5 ndarray and words as .pkl file
-
-        Parameters
-        ----------
-        X : scipy sparse matrix
-            Matrix of encoded word count vectors, assumed to be TF-IDF
-        words : list[str]
-            List of feature names used for the encoding
-        path : str
-            PathLike string, directory in which the data will be saved
-        dataset_name : str
-            Name of the output dir containing data
-        x_name
-            Name of the output X file name
-        words_name
-            Name of the output words file name
-
-        Raises
-        -------
-        OSError
-            When the os module cannot create dir at 'path/dataset_name'
-        FileExistsError
-            When dir already exists at 'path/dataset_name'
-
-        """
-        dirpath = f"{path}/{dataset_name}"
-        x_path = f"{dirpath}/{x_name}.h5"
-        words_path = f"{dirpath}/{words_name}.pkl"
-
-        os.mkdir(dirpath)
-
-        with h5py.File(x_path, "w") as hf:
-            hf.create_dataset(name=dataset_name, data=X.toarray())
-
-        with open(words_path, "wb") as f:
-            pickle.dump(words, f)
 
 
 def save_vectorizer(vectorizer: DocumentVectorizer, dirpath: Union[str, os.PathLike]):

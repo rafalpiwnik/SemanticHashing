@@ -1,11 +1,10 @@
-import glob
 import os
 from typing import Union
 
-from PyQt5 import QtWidgets, Qt
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import QThread, pyqtSlot, QUrl
 from PyQt5.QtGui import QDesktopServices
-from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QListWidgetItem
+from PyQt5.QtWidgets import QTableWidgetItem
 
 from controllers.SearchWorker import SearchWorker
 from gui.designer.Ui_SearchDialog import Ui_SearchDialog
