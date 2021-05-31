@@ -732,6 +732,7 @@
      <string>Files</string>
     </property>
     <addaction name="actionOpen_home"/>
+    <addaction name="actionAcknowledgments"/>
    </widget>
    <addaction name="menuFiles"/>
   </widget>
@@ -750,6 +751,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew_dataset"/>
+   <addaction name="actionFetch_dataset"/>
+   <addaction name="separator"/>
    <addaction name="actionNew_model"/>
   </widget>
   <action name="actionNew_dataset">
@@ -779,7 +782,7 @@
     <string>Fetch dataset</string>
    </property>
    <property name="toolTip">
-    <string>Fetch a vectorized dataset from an internet resource</string>
+    <string>Fetch a dataset from an internet resource</string>
    </property>
   </action>
   <action name="actionOpen_home">
@@ -791,6 +794,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionAcknowledgments">
+   <property name="text">
+    <string>Acknowledgments</string>
+   </property>
+   <property name="toolTip">
+    <string>Information regarding usage of resources and licening</string>
    </property>
   </action>
  </widget>

@@ -11,6 +11,7 @@ from controllers.controller import fetch_datasets_to_widgets, fetch_models_to_wi
 from gui.DatasetWidget import DatasetWidget
 from gui.DatasetWizard import DatasetWizard
 from gui.DialogRecallTrial import DialogRecallTrial
+from gui.FetchDatasetDialog import FetchDatasetDialog
 from gui.ModelWidget import ModelWidget
 from gui.ModelWizard import ModelWizard
 from gui.SearchDialog import SearchDialog
@@ -53,13 +54,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # TOP MENU ACTIONS
         self.actionOpen_home.triggered.connect(self.open_semhash_home)
+        self.actionAcknowledgments.triggered.connect(self.show_licencing_info)
 
         # TOOLBAR ACTIONS
         self.actionNew_dataset.triggered.connect(self.open_dataset_wizard)
         self.actionNew_model.triggered.connect(self.open_model_wizard)
+        self.actionFetch_dataset.triggered.connect(self.open_fetch_dataset_wizard)
 
         self.actionNew_dataset.setIcon(QIcon("../resources/dataset-add.png"))
         self.actionNew_model.setIcon(QIcon("../resources/model-add.png"))
+        self.actionFetch_dataset.setIcon(QIcon("../resources/dataset-fetch.png"))
 
         # TRAIN BUTTONS
         self.buttonTrainWizard.clicked.connect(self.open_train_wizard)
@@ -300,9 +304,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog = DialogRecallTrial(dataset_name, model_name, parent=self)
         dialog.exec_()
 
+    @pyqtSlot()
+    def open_fetch_dataset_wizard(self):
+        dialog = FetchDatasetDialog(parent=self)
+        dialog.datasetsChanged.connect(self.update_datasets)
+        dialog.exec_()
+
+    @pyqtSlot()
+    def show_licencing_info(self):
+        msgBox = QtWidgets.QMessageBox(self)
+        msgBox.setWindowTitle("Acknowledgments")
+        msgBox.setIcon(QtWidgets.QMessageBox.Information)
+        msgBox.setText("Icons and other image resources were provided free of charge by https://icons8.com")
+        msgBox.show()
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+
+    usersetup.setup_homedir(overwrite=False)
+
     window = MainWindow()
     window.show()
 

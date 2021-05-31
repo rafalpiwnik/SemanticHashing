@@ -6,7 +6,7 @@ from typing import Union
 HOME_PATH: Union[str, os.PathLike] = os.path.expanduser("~")
 
 CONFIG_ROOT = "semhash"
-DIRS = ["model_home", "data_home", "logs"]
+DIRS = ["model_home", "data_home"]
 CONFIG_NAME = "config.json"
 
 LOCAL_CONFIG_PATH = "../resources/config.json"

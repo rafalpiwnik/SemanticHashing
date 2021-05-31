@@ -5,9 +5,8 @@ from typing import Optional
 
 import h5py
 import numpy as np
-import pandas as pd
 import scipy.sparse.csr
-from sklearn.datasets import fetch_20newsgroups, fetch_rcv1
+from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from controllers.usersetup import load_config
@@ -40,6 +39,7 @@ def extract_train(dataset_name: str) -> Optional[np.ndarray]:
     except (IOError, OSError):
         print(f"Cannot reach data.hdf5 in {dataset_name}")
         return None
+
 
 # TODO Not used for now
 def extract_dataset_vectorizer(dataset_name: str) -> Optional[DocumentVectorizer]:
@@ -146,79 +146,6 @@ def create_20ng(vocab_size: int, name: str = "20ng"):
                              num_test=sparse_test_tfidf.shape[0],
                              num_labels=1)
 
-        mi.dump(dest)
-
-    except (KeyError, IOError):
-        print("Couldn't read config.json file")
-
-
-# TODO Complete this or delete
-def create_rcv1(vocab_size: int, num_train: int = 100000, num_test: int = 20000, num_labels: int = 40,
-                name: str = "rcv1", remove_short: bool = True, remove_long: bool = True):
-    try:
-        data_home = load_config()["model"]["data_home"]
-        dest = f"{data_home}/{name}"
-
-        try:
-            os.mkdir(f"{data_home}/{name}")
-        except FileExistsError:
-            pass
-
-        print("Fetching rcv1...")
-        rcv1 = fetch_rcv1()
-
-        feature_indices = np.argsort(-rcv1.target.sum(axis=0), axis=1)[0, :num_labels]
-        feature_indices = np.asarray(feature_indices).squeeze()
-        targets = rcv1.target[:, feature_indices]
-
-        word_indices = np.argsort(-rcv1.data.sum(axis=0), axis=1)[0, :vocab_size]
-        word_indices = np.asarray(word_indices).squeeze()
-        docs = rcv1.data[:, word_indices]
-
-        targets = [t for t in targets]
-        documents = [d for d in docs]
-
-        df = pd.DataFrame({'doc_id': rcv1.sample_id.tolist(), 'bow': documents, 'label': targets})
-        df.set_index('doc_id', inplace=True)
-        print('total docs: {}'.format(len(df)))
-
-        # remove any empty labels
-        def count_num_tags(target):
-            return target.sum()
-
-        def get_num_word(bow):
-            return bow.count_nonzero()
-
-        df = df[df.label.apply(count_num_tags) > 0]
-        print('after filter: total docs: {}'.format(len(df)))
-
-        df = df[df.bow.apply(get_num_word) > 0]
-        print('after filter: total docs: {}'.format(len(df)))
-
-        # remove any empty documents
-        if remove_short:
-            print('remove any short document that has less than 5 words.')
-            df = df[df.bow.apply(get_num_word) > 5]
-            print('num docs: {}'.format(len(df)))
-
-        if remove_long:
-            print('remove any long document that has more than 500 words.')
-            df = df[df.bow.apply(get_num_word) <= 500]
-            print('num docs: {}'.format(len(df)))
-
-        df = df.reindex(np.random.permutation(df.index))
-
-        sampled_df = df.sample(num_train + num_test)
-        train_df = sampled_df.iloc[:num_train]
-
-        test_df = sampled_df.iloc[num_train:]
-        cv_df = test_df[:num_test // 2]
-        test_df = test_df[num_test // 2:]
-
-        train = train_df.to_numpy()
-        test = test_df.to_numpy()
-
-        mi = DatasetMetaInfo(name, vocab_size, num_train, num_test, num_labels)
         mi.dump(dest)
 
     except (KeyError, IOError):
