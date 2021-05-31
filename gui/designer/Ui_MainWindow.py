@@ -339,7 +339,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionNew_model)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.trainDatasetStack.setCurrentIndex(-1)
         self.testDatasetStack.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

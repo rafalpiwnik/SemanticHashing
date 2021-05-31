@@ -35,6 +35,8 @@ class TrainModelWorker(QObject):
 
         self.progbar_callback = GuiCallback()
 
+        print(epochs, batch_size, decaySteps, decayRate, initialRate)
+
     @property
     def progressbar_callback(self):
         return self.progbar_callback
