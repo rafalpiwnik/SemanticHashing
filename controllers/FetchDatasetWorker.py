@@ -10,13 +10,24 @@ class FetchDatasetWorker(QObject):
     status = pyqtSignal(str)
 
     def __init__(self, dataset_name: str, output_name: str, vocab_size: int):
+        """Creates a worker for fetching a dataset from an internet resource
+
+        Parameters
+        ----------
+        dataset_name : str
+            Qualified dataset name from the list of available datasets
+        output_name : str
+            Output name of the dataset
+        vocab_size : int
+            Vocabulary size to fetch
+        """
         super().__init__()
         self._dataset_name = dataset_name
         self._output_name = output_name
         self._vocab_size = vocab_size
 
     def run(self):
-        """Long-running task."""
+        """Fetches one of the available datasets or raises NotImplementedError if no such datasets is available"""
         start = datetime.now()
 
         if self._dataset_name == "20ng":

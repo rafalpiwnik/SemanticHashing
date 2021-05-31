@@ -1,14 +1,7 @@
-import numpy as np
 import tensorflow as tf
-from tensorflow.python.keras.utils.vis_utils import plot_model
 
-import vdsh.utility
-from addressing import file_search
 from addressing.metrics import run_recall_test
-from controllers.TrainModelWorker import TrainModelWorker
-from controllers.controller import create_user_dataset
 from storage import DocumentVectorizer
-from storage.datasets import extract_train
 from vdsh import create_vdsh
 
 
@@ -16,8 +9,6 @@ def train_mock(train, train_target, test, test_target):
     VOCAB_SIZE = 100
 
     vectorizer = DocumentVectorizer(VOCAB_SIZE)
-    # paths = get_paths("datasets/mini_newsgroups")
-    # X_sparse, words = vectorizer.fit_transform(paths)
 
     vdsh = create_vdsh(VOCAB_SIZE, hidden_dim=1000, latent_dim=32, kl_step=(1 / 5000.0), dropout_prob=0.1)
 

@@ -79,7 +79,7 @@ class VDSH(Model, ABC):
         ]
 
     @staticmethod
-    def reconstruct_loss(logprob_words, inputs, torch=False):
+    def reconstruct_loss(logprob_words, inputs):
         return -tf.reduce_mean(tf.reduce_sum(logprob_words * inputs, axis=1))
 
     @staticmethod
@@ -110,7 +110,7 @@ class VDSH(Model, ABC):
         return {
             "loss": self.total_loss_tracker.result(),
             "reconstruction_loss": self.reconstruction_loss_tracker.result(),
-            "kl_loss": self.kl_loss_tracker.result(),
+            "kl_loss": self.kl_loss_tracker.result()
         }
 
     def call(self, inputs, training=None, mask=None):

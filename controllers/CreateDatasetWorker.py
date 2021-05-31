@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 import h5py
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal
 
 import storage
 from controllers.usersetup import load_config
@@ -23,7 +23,6 @@ class CreateDatasetWorker(QObject):
         self.file_ext = file_ext
 
     def run(self):
-        """Long-running task."""
         start = datetime.now()
 
         data_home = load_config()["model"]["data_home"]

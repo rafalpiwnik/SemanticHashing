@@ -88,8 +88,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.runSearchButton.clicked.connect(self.open_dialog_search)
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
-    def update_current_dataset(self, item: QtWidgets.QListWidgetItem):
-        """Changes currently displayed item after double click on it"""
+    def update_current_dataset(self, item: QtWidgets.QListWidgetItem) -> None:
+        """Changes currently displayed in every dataset stack
+
+        Parameters
+        ----------
+        item : QtWidgets.QListWidgetItem
+            DatasetWidget item which has been selected by the user
+        """
         list_widget: DatasetWidget = self.datasetList.itemWidget(item)
         for stack in self.datasetStacks:
             cloned_widget = list_widget.clone()
@@ -101,6 +107,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             stack.removeWidget(old_widget)
 
     def verify_current_dataset(self):
+        """Verifies if the current dataset in any of the stacks is still available locally"""
         for stack in self.datasetStacks:
             current: DatasetWidget = stack.currentWidget()
             meta_info = controller.check_dataset_available(current.name.text())
@@ -114,10 +121,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 current.set_fields(meta_info)
                 self.check_compatible()
-                self.check_test_compatible()
+                self._check_test_compatible()
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
-    def update_current_model(self, item: QtWidgets.QListWidgetItem):
+    def update_current_model(self, item: QtWidgets.QListWidgetItem) -> None:
+        """Changes currently displayed model in every model stack
+
+        Parameters
+        ----------
+        item : QtWidgets.QListWidgetItem
+            ModelWidget item which has been selected by the user
+        """
         list_widget: ModelWidget = self.modelList.itemWidget(item)
         for stack in self.modelStacks:
             cloned_widget = list_widget.clone()
@@ -145,6 +159,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.check_compatible()
 
     def check_compatible(self):
+        """Checks if dataset and model displayed in mixing table slots are compatible
+
+        This analyzes vocab size mismatch and checks whether model / dataset is in a prompt preset
+
+
+        Returns
+        -------
+        None
+            Sets the test / train button as active or inactive and initiates test compatibility check
+        """
         for ds, ms in zip(self.datasetStacks, self.modelStacks):
             dataset: DatasetWidget = ds.currentWidget()
             model: ModelWidget = ms.currentWidget()
@@ -181,9 +205,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.buttonTrainWizard.setEnabled(False)
                         self.testButton.setEnabled(False)
 
-            self.check_test_compatible()
+            self._check_test_compatible()
 
-    def check_test_compatible(self):
+    def _check_test_compatible(self):
+        """Checks if dataset and model at test dataset / model stacks are compatible for a test"""
         dataset: DatasetWidget = self.testDatasetStack.currentWidget()
         model: ModelWidget = self.testModelStack.currentWidget()
 
@@ -195,12 +220,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_dataset_wizard(self):
+        """Opens the dataset wizard dialog window which provides interfaces for creating a dataset from directory"""
         dialog = DatasetWizard(parent=self)
         dialog.datasetsChanged.connect(self.update_datasets)
         dialog.exec_()
 
     @pyqtSlot()
     def open_train_wizard(self):
+        """Opens the train wizard dialog window which provides interfaces for training a model"""
         dialog = TrainWizard(self.trainDatasetStack.currentWidget(), self.trainModelStack.currentWidget(),
                              parent=self)
         dialog.modelsChanged.connect(self.update_models)
@@ -208,12 +235,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_model_wizard(self):
+        """Opens the model wizard dialog window which provides interfaces for creating a model"""
         dialog = ModelWizard(self.datasetList)
         dialog.modelsChanged.connect(self.update_models)
         dialog.exec_()
 
     @pyqtSlot()
     def update_datasets(self):
+        """Updates the dataset list by fetching the datasets available at data_home"""
         self.verify_current_dataset()
 
         widgets = fetch_datasets_to_widgets()
@@ -229,6 +258,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def update_models(self):
+        """Updates the model list by fetching the models available at model_home"""
         self.verify_current_model()
 
         widgets = fetch_models_to_widgets()
@@ -244,6 +274,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def check_search_available(self):
+        """Verifies whether model at test model stack is available for search i.e. it has a vectorizer defined"""
         model_widget: ModelWidget = self.searchModelStack.currentWidget()
         model_widget.reset_state()
         if not model_widget.is_prompt and model_widget.vectorizer.text() == "Present":
@@ -257,6 +288,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_dialog_choose_search_dir(self):
+        """Opens a file dialog to choose a root dir for as a search directory"""
         home = os.path.expanduser("~") if self.dirname.text() == "" else self.dirname.text()
         fileDialog = QFileDialog(directory=home)
         dirUrl: QUrl = fileDialog.getExistingDirectoryUrl()
@@ -270,6 +302,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_dialog_choose_search_file(self):
+        """Opens a file dialog to choose an example file"""
         home = os.path.expanduser("~") if self.dirname.text() == "" else self.dirname.text()
         fileDialog = QFileDialog(directory=home)
         fileUrl: QUrl = fileDialog.getOpenFileUrl()[0]
@@ -283,6 +316,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_dialog_search(self):
+        """Opens a search wizard dialog window which conducts the search and displays a result"""
         search_dir = self.dirname.text()
         model_name = self.searchModelStack.currentWidget().name.text()
         example_file_path = self.filename.text()
@@ -294,11 +328,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_semhash_home(self):
-        print(usersetup.get_semhash_home())
+        """Opens the default explorer at the programs home directory"""
         os.system(f'explorer.exe {usersetup.get_semhash_home()}')
 
     @pyqtSlot()
     def open_dialog_test(self):
+        """Opens the test wizard dialog window which conducts the search and displays metrics"""
         dataset_name = self.testDatasetStack.currentWidget().name.text()
         model_name = self.testModelStack.currentWidget().name.text()
         dialog = DialogRecallTrial(dataset_name, model_name, parent=self)
@@ -306,12 +341,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def open_fetch_dataset_wizard(self):
+        """Opens the fetch wizard dialog window which displays interface for downloading datasets"""
         dialog = FetchDatasetDialog(parent=self)
         dialog.datasetsChanged.connect(self.update_datasets)
         dialog.exec_()
 
     @pyqtSlot()
     def show_licencing_info(self):
+        """Displays info message box with licencing information"""
         msgBox = QtWidgets.QMessageBox(self)
         msgBox.setWindowTitle("Acknowledgments")
         msgBox.setIcon(QtWidgets.QMessageBox.Information)

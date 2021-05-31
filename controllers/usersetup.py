@@ -14,11 +14,7 @@ LOCAL_CONFIG_PATH = "../resources/config.json"
 DEFAULT_SETTINGS = {
     "model": {
         "model_home": f"{HOME_PATH}/{CONFIG_ROOT}/model_home",
-        "data_home": f"{HOME_PATH}/{CONFIG_ROOT}/data_home",
-        "logs_home": f"{HOME_PATH}/{CONFIG_ROOT}/logs"
-    },
-    "gui": {
-        "geometry": ""
+        "data_home": f"{HOME_PATH}/{CONFIG_ROOT}/data_home"
     }
 }
 

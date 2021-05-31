@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
+    <width>586</width>
     <height>290</height>
    </rect>
   </property>
@@ -32,6 +32,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="vocabSize">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="minimum">
          <number>2500</number>
         </property>
@@ -139,7 +142,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="createWorkerStatus">
+      <widget class="QLabel" name="statusMessage">
        <property name="text">
         <string>Waiting for start...</string>
        </property>

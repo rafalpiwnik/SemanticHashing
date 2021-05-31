@@ -1,5 +1,4 @@
 import os
-import pickle
 import shutil
 from typing import Optional
 
@@ -10,7 +9,6 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from controllers.usersetup import load_config
-from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo
 
 AVAILABLE_DATASETS = ["20ng"]
@@ -38,31 +36,6 @@ def extract_train(dataset_name: str) -> Optional[np.ndarray]:
             return train
     except (IOError, OSError):
         print(f"Cannot reach data.hdf5 in {dataset_name}")
-        return None
-
-
-# TODO Not used for now
-def extract_dataset_vectorizer(dataset_name: str) -> Optional[DocumentVectorizer]:
-    """Extracts DocumentVectorizer from a given dataset, None if vectorizer is unreachable in data_home/dataset_name
-
-    Parameters
-    ----------
-    dataset_name : str
-        Qualified dataset name
-
-    Returns
-    -------
-    Optional[DocumentVectorizer]
-        DocumentVectorizer used to encode the dataset if available, None otherwise
-    """
-    data_home = load_config()["model"]["data_home"]
-
-    try:
-        with open(f"{data_home}/{dataset_name}/vectorizer.pkl", "rb") as f:
-            vec = pickle.load(f)
-            return vec
-    except IOError:
-        print(f"Cannot reach vectorizer in {dataset_name}")
         return None
 
 

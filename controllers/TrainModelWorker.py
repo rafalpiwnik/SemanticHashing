@@ -1,13 +1,13 @@
 import os
 import shutil
 
+import tensorflow as tf
 from PyQt5.QtCore import pyqtSignal, QObject
 
 import vdsh.utility
 from controllers.GuiCallback import GuiCallback
 from controllers.usersetup import load_config
 from storage.datasets import extract_train
-import tensorflow as tf
 
 
 class TrainModelWorker(QObject):
@@ -19,13 +19,7 @@ class TrainModelWorker(QObject):
     def __init__(self, model_name: str, dataset_name: str, epochs: int, batch_size: int, optimizer: str,
                  initialRate: float, decaySteps: int,
                  decayRate: float):
-        """Create a VDSH train model worker
-
-        TODO
-
-        Parameters
-        ----------
-        """
+        """Create a VDSH train model worker"""
         super().__init__()
 
         self.model_name = model_name

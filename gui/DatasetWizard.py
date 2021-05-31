@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 
 from controllers.CreateDatasetWorker import CreateDatasetWorker
+from controllers.controller import check_dataset_available
 from gui.designer.Ui_DatasetWizard import Ui_DatasetWizardDialog
 
 
@@ -19,7 +20,7 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
         self.setWindowIcon(QIcon("../resources/dataset-add.png"))
 
         self.createDatasetButton.setDisabled(True)
-        self.outputName.textChanged.connect(self.enableButtonOnNameFilled)
+        self.outputName.textChanged.connect(self.enable_button_on_name_filled)
 
         # DIALOG DIR CHOICE
         self.chooseDirectoryButton.clicked.connect(self.open_dialog_choose_dir)
@@ -27,8 +28,26 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
         # COMMIT
         self.createDatasetButton.clicked.connect(self.create_dataset)
 
+        # CHECKING FOR OVERWRITE
+        self.infoStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 13px }'
+        self.warningStyle = 'QLabel { color: black; font: italic "Segoe UI"; font-size: 13px }'
+
+        self.outputName.textChanged.connect(self.check_dataset_overwrite)
+        self.outputName.textChanged.connect(self.enable_button_on_name_filled)
+
     @pyqtSlot(str)
-    def enableButtonOnNameFilled(self, text: str):
+    def check_dataset_overwrite(self, output_name: str):
+        meta_info = check_dataset_available(output_name)
+        if meta_info and self.outputName.text() != "":
+            self.statusMessage.setStyleSheet(self.warningStyle)
+            self.statusMessage.setText(f"Creating the dataset will overwrite the previous one."
+                                       f" Change name if you wish to avoid this!")
+        else:
+            self.statusMessage.setStyleSheet(self.infoStyle)
+            self.statusMessage.setText("Waiting for start...")
+
+    @pyqtSlot(str)
+    def enable_button_on_name_filled(self, text: str):
         if self.outputName.text() == "":
             self.createDatasetButton.setDisabled(True)
         else:
@@ -51,7 +70,7 @@ class DatasetWizard(QtWidgets.QDialog, Ui_DatasetWizardDialog):
 
     @pyqtSlot(str)
     def update_status(self, msg: str):
-        self.createWorkerStatus.setText(msg)
+        self.statusMessage.setText(msg)
 
     @pyqtSlot()
     def exit_on_worker_finished(self):
