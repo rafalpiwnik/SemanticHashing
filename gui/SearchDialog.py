@@ -81,4 +81,5 @@ class SearchDialog(QtWidgets.QDialog, Ui_SearchDialog):
     def launch_app(self, item: QTableWidgetItem):
         path_item = self.fileTable.item(item.row(), FILE_LOCATION_INDEX)
         file_url = QUrl(path_item.text().replace("\\", "/"))
+        print(file_url)
         QDesktopServices.openUrl(file_url)
