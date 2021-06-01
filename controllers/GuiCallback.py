@@ -15,6 +15,7 @@ class GuiCallback(QObject, Callback):
         self.epoch_num = 0
 
     def on_epoch_begin(self, epoch, logs=None):
+        """On epoch begin update the total progress and emit it"""
         self.epoch_step = 0
         self.epoch_num += 1
 
@@ -22,6 +23,7 @@ class GuiCallback(QObject, Callback):
         self.learningProgress.emit(total_progress)
 
     def on_batch_end(self, batch, logs=None):
+        """On batch end update the total progress and emi it"""
         self.epoch_step += 1
         current_progress = min(math.floor(100 * (self.epoch_step / self.params["steps"])), 100)
 

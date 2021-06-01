@@ -9,6 +9,13 @@ from addressing import medhash_transform
 from addressing.metrics import precision, top_k_indices
 from controllers.usersetup import load_config
 
+PROGRESS_LOADING = 5
+PROGRESS_LOADING_MODEL = 10
+PROGRESS_IO_COMPLETE = 27
+PROGRESS_AFTER_PREDICT = 42
+TARGET_PROGRESS = 95
+FINISHED_PROGRESS = 100
+
 
 class RecallTrialWorker(QObject):
     finished = pyqtSignal()
@@ -25,12 +32,12 @@ class RecallTrialWorker(QObject):
 
     def run(self):
         self.status.emit(f"Loading model '{self._model_name}'...")
-        self.progress.emit(5)
+        self.progress.emit(PROGRESS_LOADING)
 
         model, _ = vdsh.utility.load_model(self._model_name)
 
         self.status.emit(f"Loading data...")
-        self.progress.emit(10)
+        self.progress.emit(PROGRESS_LOADING_MODEL)
 
         data_home = load_config()["model"]["data_home"]
         try:
@@ -41,19 +48,19 @@ class RecallTrialWorker(QObject):
                 test_targets: np.ndarray = hf["test_labels"][:]
 
                 self.status.emit(f"Running predict...")
-                self.progress.emit(27)
+                self.progress.emit(PROGRESS_IO_COMPLETE)
 
                 train_pred = model.predict(train)
                 test_pred = model.predict(test)
 
                 self.status.emit(f"Transforming to binary codes")
-                self.progress.emit(42)
+                self.progress.emit(PROGRESS_AFTER_PREDICT)
 
                 train_codes = medhash_transform(train_pred)
                 test_codes = medhash_transform(test_pred)
 
-                current_progress = 42
-                end_progress = 95
+                current_progress = PROGRESS_AFTER_PREDICT
+                end_progress = TARGET_PROGRESS
                 steps = len(test_codes)
                 progress_per_step = (end_progress - current_progress) / steps
 
@@ -71,7 +78,7 @@ class RecallTrialWorker(QObject):
                 mean_precision = np.array(precision_scores).mean()
                 self.precisionResult.emit(mean_precision)
 
-                self.progress.emit(100)
+                self.progress.emit(FINISHED_PROGRESS)
                 self.finished.emit()
                 self.status.emit("Finished")
         except (IOError, OSError):

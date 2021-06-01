@@ -132,6 +132,7 @@ class ModelWidget(QtWidgets.QWidget, EntityWidget):
         self.fit.setStyleSheet(self.fieldMatchStyle)
 
     def set_fields(self, mi: ModelMetaInfo):
+        """Fill in the widgets labels with data from a specified meta info file"""
         try:
             self.name.setText(mi.info["name"])
         except KeyError:

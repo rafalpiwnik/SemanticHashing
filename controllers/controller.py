@@ -11,7 +11,7 @@ from storage.entity_discovery import scan_models, scan_datasets
 
 
 def fetch_datasets_to_widgets() -> list[DatasetWidget]:
-
+    """Fetches datasets from data_home and returns them as DatasetWidgets"""
     result = []
     mi_datasets = scan_datasets()
 

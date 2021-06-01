@@ -1,14 +1,12 @@
 import tensorflow as tf
 
 from addressing.metrics import run_recall_test
-from storage import DocumentVectorizer
 from vdsh import create_vdsh
 
 
+# Sample test procedure
 def train_mock(train, train_target, test, test_target):
     VOCAB_SIZE = 100
-
-    vectorizer = DocumentVectorizer(VOCAB_SIZE)
 
     vdsh = create_vdsh(VOCAB_SIZE, hidden_dim=1000, latent_dim=32, kl_step=(1 / 5000.0), dropout_prob=0.1)
 
@@ -31,35 +29,4 @@ def train_mock(train, train_target, test, test_target):
 
 
 if __name__ == "__main__":
-    # setup_homedir(overwrite=False)
-
-    VOCAB_SIZE = 10000
-    HIDDEN_DIM = 1000
-    LATENT_DIM = 32
-
-    # Train schema to date
-    """
-    create_user_dataset(root_dir="C:\\Users\\rafal\\Desktop\\20_newsgroups", vocab_size=VOCAB_SIZE, name="20ng_user")
-
-    model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="20ng_user")
-    model.compile(optimizer="adam")
-
-    vdsh.utility.train_model(model, 100, 15, "20ng_user")
-    """
-
-    # model = vdsh.utility.create_vdsh(VOCAB_SIZE, HIDDEN_DIM, LATENT_DIM, 1 / 5000.0, 0.1, name="main_created_model")
-    # model.compile(optimizer="adam")
-    # vdsh.utility.dump_model(model)
-
-    # model, vect = vdsh.utility.load_model("main_created_model")
-    # model.predict(np.zeros((3535, VOCAB_SIZE)))
-
-    # model, vec = vdsh.utility.load_model("20ng_user")
-    # predict = model.predict(np.zeros(shape=(1, 10000)))
-    # print(predict)
-
-    # vdsh.utility.train_model(model, 100, 10, dataset_name="20ng_user")
-
-    # Working file search
-    # file_search.search("20ng_user", "C:\\Users\\rafal\\Desktop\\20_newsgroups",
-    #                    "C:\\Users\\rafal\\Desktop\\20_newsgroups\\talk.politics.guns\\53294")
+    print("Run MainWindow to use the gui")

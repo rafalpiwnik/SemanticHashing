@@ -11,6 +11,7 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
     modelsChanged = pyqtSignal()
 
     def __init__(self, dw: DatasetWidget, mw: ModelWidget, parent=None):
+        """Creates a training wizard, which can run the training process"""
         super(TrainWizard, self).__init__(parent=parent)
         self.setupUi(self)
 
@@ -22,6 +23,9 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
 
         # Connections
         self.fitModelButton.clicked.connect(self.startTraining)
+
+        self.worker = None
+        self.thread = None
 
     def make_input_disabled(self):
         elements = [self.optimizer, self.trainEpochs, self.trainBatch, self.initialRate, self.decaySteps,
@@ -35,6 +39,7 @@ class TrainWizard(QtWidgets.QDialog, Ui_TrainWizard):
 
     @pyqtSlot()
     def exit_on_worker_finished(self):
+        """Close the window and emit modelsChanged to update models displayed in the main window"""
         self.modelsChanged.emit()
         self.close()
 

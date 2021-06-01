@@ -9,8 +9,15 @@ from controllers.usersetup import load_config
 from storage import DocumentVectorizer
 from storage.MetaInfo import DatasetMetaInfo
 
+PROGRESS_START = 10
+PROGRESS_PATHS_DISCOVERED = 35
+PROGRESS_TRANSFORMED = 90
+PROGRESS_VECTORIZER_SAVED = 95
+PROGRESS_FINISHED = 100
+
 
 class CreateDatasetWorker(QObject):
+    """QObject worker which manages creation of user-authored datasets"""
     finished = pyqtSignal()
     progress = pyqtSignal(int)
     status = pyqtSignal(str)
@@ -28,7 +35,7 @@ class CreateDatasetWorker(QObject):
         data_home = load_config()["model"]["data_home"]
         dest = f"{data_home}/{self.name}"
 
-        self.progress.emit(10)
+        self.progress.emit(PROGRESS_START)
 
         try:
             os.mkdir(f"{dest}")
@@ -40,14 +47,14 @@ class CreateDatasetWorker(QObject):
         paths = storage.get_paths(self.root_dir, filter_extension=self.file_ext)
         print(f"Found {len(paths)} suitable files at {self.root_dir}")
 
-        self.progress.emit(35)
+        self.progress.emit(PROGRESS_PATHS_DISCOVERED)
         self.status.emit(f"Found {len(paths)} files. Vectorizing...")
 
         print("Vectorizing...")
         v = DocumentVectorizer(self.vocab_size)
         X, words = v.fit_transform(paths)
 
-        self.progress.emit(90)
+        self.progress.emit(PROGRESS_TRANSFORMED)
         self.status.emit(f"Saving dataset to {dest}")
 
         print("Saving dataset...")
@@ -56,7 +63,7 @@ class CreateDatasetWorker(QObject):
 
         storage.save_vectorizer(v, dirpath=f"{dest}")
 
-        self.progress.emit(95)
+        self.progress.emit(PROGRESS_VECTORIZER_SAVED)
 
         mi = DatasetMetaInfo(self.name,
                              self.vocab_size,
@@ -70,6 +77,6 @@ class CreateDatasetWorker(QObject):
 
         end = datetime.now()
 
-        self.progress.emit(100)
+        self.progress.emit(PROGRESS_FINISHED)
         self.status.emit(f"Finished ({(end - start).seconds}s)")
         self.finished.emit()

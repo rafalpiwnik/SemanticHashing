@@ -1,14 +1,10 @@
-import sys
-
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtWidgets import QLabel, QMainWindow, QApplication, QListWidgetItem, QListWidget, QMenu, QAction, \
-    QGraphicsOpacityEffect
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QLabel, QMenu, QAction
 
 from controllers import controller
 from gui.EntityWidget import EntityWidget
-from storage import entity_discovery
 from storage.MetaInfo import DatasetMetaInfo
 
 
@@ -26,11 +22,9 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.hboxLayout = QtWidgets.QHBoxLayout()
 
         # ICON
-
         self.iconLabel = QLabel("dataset-icon")
 
         # LABELS
-
         self.nameLabel = QLabel("Name")
         self.vocabLabel = QLabel("Vocabulary size")
         self.trainLabel = QLabel("Train size")
@@ -45,7 +39,6 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
             lab.setFont(self.label_font)
 
         # FIELDS
-
         self.name = QLabel("loading...")
         self.train = QLabel("loading...")
         self.test = QLabel("loading...")
@@ -61,7 +54,6 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
             f.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
         # ADDING ROWS
-
         self.formLayout.addRow(self.nameLabel, self.name)
         self.formLayout.addRow(self.vocabLabel, self.vocabulary)
         self.formLayout.addRow(self.trainLabel, self.train)
@@ -70,7 +62,6 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.formLayout.addRow(self.authorLabel, self.author)
 
         # WRAPPING HBOX
-
         self.hboxLayout.addWidget(self.iconLabel, 0)
         self.hboxLayout.addLayout(self.formLayout, 1)
 
@@ -97,7 +88,7 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         remove.triggered.connect(self.make_remove_dataset)
         menu.addAction(remove)
 
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec_(self.mapToGlobal(event.pos()))
 
     @pyqtSlot()
     def make_remove_dataset(self):
@@ -134,6 +125,7 @@ class DatasetWidget(QtWidgets.QWidget, EntityWidget):
         self.name.setStyleSheet(self.fieldMatchStyle)
 
     def set_fields(self, mi: DatasetMetaInfo):
+        """Fill in the widgets labels with data from a specified meta info file"""
         try:
             self.name.setText(mi.info["name"])
         except KeyError:

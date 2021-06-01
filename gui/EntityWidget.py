@@ -1,9 +1,11 @@
 import abc
 
-from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QLabel, QGraphicsOpacityEffect
+
+LABEL_FONT_WEIGHT = 75
+DEFAULT_PROMPT_OPACITY = 0.25
 
 
 class EntityWidget:
@@ -11,7 +13,7 @@ class EntityWidget:
         super().__init__()
         self.label_font = QFont()
         self.label_font.setBold(False)
-        self.label_font.setWeight(75)
+        self.label_font.setWeight(LABEL_FONT_WEIGHT)
 
         self.fieldStyle = 'QLabel { color: black; font: "Segoe UI"; font-size: 14px }'
         self.fieldErrorStyle = 'QLabel { color: red; font: bold "Segoe UI"; font-size: 14px }'
@@ -58,7 +60,7 @@ class EntityWidget:
             f.setStyleSheet(self.fieldErrorStyle)
 
     # Intentional
-    def make_prompt_preset(self, opacity=0.25):
+    def make_prompt_preset(self, opacity=DEFAULT_PROMPT_OPACITY):
         self.is_prompt = True
 
         op = QGraphicsOpacityEffect(self)

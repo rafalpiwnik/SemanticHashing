@@ -9,6 +9,10 @@ from controllers.GuiCallback import GuiCallback
 from controllers.usersetup import load_config
 from storage.datasets import extract_train
 
+TRAINING_START_MSG = "Starting training..."
+
+MODEL_SAVED_MSG = "Model saved"
+
 
 class TrainModelWorker(QObject):
     """Worker used to train a VDSH model model"""
@@ -34,8 +38,6 @@ class TrainModelWorker(QObject):
         self.initial_rate = initialRate
 
         self.progbar_callback = GuiCallback()
-
-        print(epochs, batch_size, decaySteps, decayRate, initialRate)
 
     @property
     def progressbar_callback(self):
@@ -84,7 +86,7 @@ class TrainModelWorker(QObject):
 
         model.compile(optimizer=opt)
 
-        self.status.emit(f"Starting training...")
+        self.status.emit(TRAINING_START_MSG)
 
         model.fit(X, epochs=self.epochs, batch_size=self.batch_size, callbacks=[self.progbar_callback])
 
@@ -94,5 +96,5 @@ class TrainModelWorker(QObject):
         # Fitted model is saved, and marked fit, it cannot be fit once more without copying
         vdsh.utility.dump_model(model)
 
-        self.status.emit("Model saved")
+        self.status.emit(MODEL_SAVED_MSG)
         self.finished.emit()
