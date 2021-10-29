@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from tensorflow.python.keras.callbacks import Callback
 
 
+# noinspection PyUnresolvedReferences
 class GuiCallback(QObject, Callback):
     learningProgress = pyqtSignal(int)
     epochProgress = pyqtSignal(int)

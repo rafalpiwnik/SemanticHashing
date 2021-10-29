@@ -14,6 +14,7 @@ TRAINING_START_MSG = "Starting training..."
 MODEL_SAVED_MSG = "Model saved"
 
 
+# noinspection PyUnresolvedReferences
 class TrainModelWorker(QObject):
     """Worker used to train a VDSH model model"""
     finished = pyqtSignal()

@@ -16,6 +16,7 @@ PROGRESS_VECTORIZER_SAVED = 95
 PROGRESS_FINISHED = 100
 
 
+# noinspection PyUnresolvedReferences
 class CreateDatasetWorker(QObject):
     """QObject worker which manages creation of user-authored datasets"""
     finished = pyqtSignal()

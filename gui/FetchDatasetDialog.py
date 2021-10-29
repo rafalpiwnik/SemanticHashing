@@ -54,7 +54,6 @@ class FetchDatasetDialog(QDialog, Ui_FetchDatasetDialog):
         self.datasetName.setDisabled(True)
         self.outputName.setDisabled(True)
         self.vocabSize.setDisabled(True)
-        self.stopwordsChoice.setDisabled(True)
         self.fetchDatasetButton.setDisabled(True)
 
         self.thread = QThread()

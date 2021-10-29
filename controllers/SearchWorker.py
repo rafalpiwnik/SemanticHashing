@@ -52,7 +52,7 @@ class SearchWorker(QObject):
         pred_search_target = model.predict(search_target)
         pred_example = model.predict(example)
 
-        self.status.emit(f"Creating binary codes length={len(pred_example)}...")
+        self.status.emit(f"Creating binary codes...")
         self.progress.emit(PROGRESS_PREDICTED)
 
         codes_search_target = addressing.medhash_transform(pred_search_target)
